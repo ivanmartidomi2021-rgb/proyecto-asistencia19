@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora | Sistema Escolar</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#080b12;
+  --panel:#0d1017;
+  --card:#111520;
+  --hover:#161b27;
+  --border:rgba(255,255,255,0.055);
+  --border2:rgba(255,255,255,0.1);
+  --txt:#e8eeff;
+  --txt2:#5a6480;
+  --txt3:#2e3550;
+  --accent:#00d4ff;
+  --accent2:rgba(0,212,255,0.08);
+  --green:#00e676;
+  --red:#ff4d6d;
+  --amber:#ffb347;
+  --blue:#4d9fff;
+  --purple:#b47dff;
+  --green-g:rgba(0,230,118,0.08);
+  --red-g:rgba(255,77,109,0.08);
+  --amber-g:rgba(255,179,71,0.08);
+  --blue-g:rgba(77,159,255,0.08);
+  --purple-g:rgba(180,125,255,0.08);
+  --font:'Syne',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:10px;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--font);min-height:100vh;display:flex;flex-direction:column;}
+/* grid noise overlay */
+body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(255,255,255,0.012) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,0.012) 60px);pointer-events:none;z-index:0;}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(8,11,18,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;gap:16px;}
+.topbar-back{background:var(--card);border:1px solid var(--border);color:var(--txt2);padding:6px 14px;border-radius:var(--r);font-size:12px;font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:6px;text-decoration:none;transition:all .2s;}
+.topbar-back:hover{color:var(--txt);border-color:var(--border2);}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:.05em;flex:1;}
+.topbar-title span{color:var(--accent);}
+.topbar-tag{font-size:10px;color:var(--txt2);font-family:var(--mono);background:var(--card);border:1px solid var(--border);padding:3px 10px;border-radius:20px;}
+
+/* HERO STRIP */
+.hero{padding:2rem 2rem 0;position:relative;z-index:1;}
+.hero-inner{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.6rem 2rem;display:flex;align-items:center;gap:2rem;overflow:hidden;position:relative;}
+.hero-inner::after{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,212,255,0.07),transparent 70%);pointer-events:none;}
+.hero-icon{width:52px;height:52px;border-radius:12px;background:var(--accent2);border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--accent);flex-shrink:0;}
+.hero-text h1{font-size:22px;font-weight:800;letter-spacing:-.02em;}
+.hero-text p{font-size:12px;color:var(--txt2);margin-top:3px;font-family:var(--mono);}
+.hero-stats{margin-left:auto;display:flex;gap:2rem;}
+.h-stat{text-align:center;}
+.h-stat-val{font-size:24px;font-weight:800;font-family:var(--mono);color:var(--accent);}
+.h-stat-lbl{font-size:10px;color:var(--txt2);margin-top:2px;letter-spacing:.06em;}
+
+/* CONTENT */
+.content{padding:1.4rem 2rem 2rem;flex:1;position:relative;z-index:1;}
+
+/* CONTROLS */
+.controls{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap;}
+.filter-pill{background:var(--card);border:1px solid var(--border);color:var(--txt2);padding:5px 14px;border-radius:20px;font-size:11px;font-family:var(--font);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.filter-pill:hover{color:var(--txt);border-color:var(--border2);}
+.filter-pill.active{background:var(--accent2);border-color:rgba(0,212,255,0.3);color:var(--accent);}
+.filter-pill.fa.active{background:var(--green-g);border-color:rgba(0,230,118,.3);color:var(--green);}
+.filter-pill.fb.active{background:var(--red-g);border-color:rgba(255,77,109,.3);color:var(--red);}
+.filter-pill.fc.active{background:var(--amber-g);border-color:rgba(255,179,71,.3);color:var(--amber);}
+.filter-pill.fd.active{background:var(--blue-g);border-color:rgba(77,159,255,.3);color:var(--blue);}
+.filter-pill.fe.active{background:var(--purple-g);border-color:rgba(180,125,255,.3);color:var(--purple);}
+.controls-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.search-box{background:var(--card);border:1px solid var(--border);color:var(--txt);padding:7px 12px 7px 34px;border-radius:var(--r);font-size:12px;font-family:var(--font);outline:none;width:200px;transition:border-color .2s;}
+.search-box:focus{border-color:rgba(0,212,255,0.3);}
+.search-wrap{position:relative;}
+.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--txt2);font-size:13px;pointer-events:none;}
+.btn-export{background:var(--card);border:1px solid var(--border);color:var(--txt2);padding:7px 14px;border-radius:var(--r);font-size:11px;font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;}
+.btn-export:hover{color:var(--accent);border-color:rgba(0,212,255,0.3);}
+
+/* TABLE */
+.table-wrap{background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead tr{background:var(--card);}
+th{padding:11px 14px;text-align:left;font-size:9.5px;letter-spacing:.1em;color:var(--txt3);font-weight:600;border-bottom:1px solid var(--border);}
+td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--txt2);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--hover);}
+.td-main{color:var(--txt);font-weight:600;}
+.td-mono{font-family:var(--mono);font-size:11px;}
+
+/* BADGES */
+.badge{font-size:9.5px;padding:3px 9px;border-radius:4px;font-weight:600;letter-spacing:.04em;}
+.b-ingreso{background:var(--green-g);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.b-egreso{background:var(--red-g);color:var(--red);border:1px solid rgba(255,77,109,.2);}
+.b-cambio{background:var(--amber-g);color:var(--amber);border:1px solid rgba(255,179,71,.2);}
+.b-matricula{background:var(--blue-g);color:var(--blue);border:1px solid rgba(77,159,255,.2);}
+.b-nota{background:var(--purple-g);color:var(--purple);border:1px solid rgba(180,125,255,.2);}
+
+/* INDEX DOT */
+.idx{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--card);border:1px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:10px;color:var(--txt2);}
+
+/* PAGER */
+.pager{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--txt2);font-family:var(--mono);}
+.pager-btns{display:flex;gap:4px;}
+.pb{width:30px;height:30px;background:var(--card);border:1px solid var(--border);color:var(--txt2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;}
+.pb:hover:not(:disabled){background:var(--hover);color:var(--txt);}
+.pb:disabled{opacity:.3;cursor:not-allowed;}
+
+.empty{padding:3rem;text-align:center;color:var(--txt3);font-size:13px;}
+.empty i{font-size:32px;display:block;margin-bottom:8px;opacity:.5;}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;min-width:240px;animation:tin .3s ease;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+.toast.ok{border-color:rgba(0,230,118,.3);}
+.toast.ok i{color:var(--green);}
+@keyframes tin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="toast-wrap" id="tw"></div>
+
+<div class="topbar">
+  <a href="/dashboard" class="topbar-back"><i class="bi bi-arrow-left"></i> Dashboard</a>
+  <div class="topbar-title">Bitácora <span>·</span> Sistema Escolar</div>
+  <span class="topbar-tag">REGISTRO HISTÓRICO</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-icon"><i class="bi bi-journal-text"></i></div>
+    <div class="hero-text">
+      <h1>Bitácora de eventos</h1>
+      <p>Registro completo de ingresos, egresos, cambios y matrículas</p>
+    </div>
+    <div class="hero-stats">
+      <div class="h-stat"><div class="h-stat-val" id="cTotal">12</div><div class="h-stat-lbl">TOTAL</div></div>
+      <div class="h-stat"><div class="h-stat-val" style="color:var(--green)" id="cIngresos">0</div><div class="h-stat-lbl">INGRESOS</div></div>
+      <div class="h-stat"><div class="h-stat-val" style="color:var(--red)" id="cEgresos">0</div><div class="h-stat-lbl">EGRESOS</div></div>
+      <div class="h-stat"><div class="h-stat-val" style="color:var(--amber)" id="cCambios">0</div><div class="h-stat-lbl">CAMBIOS</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="controls">
+    <button class="filter-pill active" data-f="all" onclick="setFilter('all',this)">Todos</button>
+    <button class="filter-pill fa" data-f="ingreso" onclick="setFilter('ingreso',this)"><i class="bi bi-person-check"></i> Ingresos</button>
+    <button class="filter-pill fb" data-f="egreso" onclick="setFilter('egreso',this)"><i class="bi bi-person-x"></i> Egresos</button>
+    <button class="filter-pill fc" data-f="cambio" onclick="setFilter('cambio',this)"><i class="bi bi-arrow-left-right"></i> Cambios</button>
+    <button class="filter-pill fd" data-f="matricula" onclick="setFilter('matricula',this)"><i class="bi bi-file-earmark-text"></i> Matrículas</button>
+    <button class="filter-pill fe" data-f="nota" onclick="setFilter('nota',this)"><i class="bi bi-chat-square-text"></i> Notas</button>
+    <div class="controls-right">
+      <div class="search-wrap">
+        <i class="bi bi-search"></i>
+        <input class="search-box" id="sq" type="text" placeholder="Buscar alumno, sección..." oninput="render()">
+      </div>
+      <button class="btn-export" onclick="exportCSV()"><i class="bi bi-download"></i> Exportar CSV</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>FECHA / HORA</th><th>TIPO</th><th>ALUMNO</th><th>SECCIÓN</th><th>ESPECIALIDAD</th><th>DETALLE</th><th>USUARIO</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none;"><i class="bi bi-inbox"></i>Sin registros para este filtro.</div>
+    <div class="pager">
+      <span id="pinfo"></span>
+      <div class="pager-btns">
+        <button class="pb" id="bprev" onclick="pg(-1)" disabled><i class="bi bi-chevron-left"></i></button>
+        <button class="pb" id="bnext" onclick="pg(1)"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA=[
+  {id:1,fecha:'2026-05-24',hora:'08:05',tipo:'ingreso',alumno:'Juan Martínez',seccion:'Informática A',especialidad:'Informática',detalle:'Nuevo ingreso registrado',usuario:'admin'},
+  {id:2,fecha:'2026-05-24',hora:'08:18',tipo:'matricula',alumno:'Ana López',seccion:'Contabilidad B',especialidad:'Contabilidad',detalle:'Matrícula completada 2026',usuario:'admin'},
+  {id:3,fecha:'2026-05-24',hora:'09:00',tipo:'cambio',alumno:'Carlos Rivas',seccion:'Mecánica A → Mecánica B',especialidad:'Mecánica',detalle:'Cambio de sección por cupo',usuario:'admin'},
+  {id:4,fecha:'2026-05-23',hora:'14:30',tipo:'egreso',alumno:'María García',seccion:'Electrónica A',especialidad:'Electrónica',detalle:'Retiro voluntario',usuario:'admin'},
+  {id:5,fecha:'2026-05-23',hora:'11:15',tipo:'nota',alumno:'Pedro Hernández',seccion:'Salud A',especialidad:'Salud',detalle:'Observación médica registrada',usuario:'admin'},
+  {id:6,fecha:'2026-05-22',hora:'07:45',tipo:'ingreso',alumno:'Lucía Torres',seccion:'Informática B',especialidad:'Informática',detalle:'Nuevo ingreso registrado',usuario:'admin'},
+  {id:7,fecha:'2026-05-22',hora:'10:20',tipo:'matricula',alumno:'Roberto Díaz',seccion:'Contabilidad A',especialidad:'Contabilidad',detalle:'Matrícula completada 2026',usuario:'admin'},
+  {id:8,fecha:'2026-05-21',hora:'13:00',tipo:'cambio',alumno:'Sofía Mejía',seccion:'Informática A → Informática C',especialidad:'Informática',detalle:'Cambio de sección solicitado',usuario:'admin'},
+  {id:9,fecha:'2026-05-21',hora:'08:55',tipo:'ingreso',alumno:'Miguel Ángel Cruz',seccion:'Mecánica A',especialidad:'Mecánica',detalle:'Nuevo ingreso registrado',usuario:'admin'},
+  {id:10,fecha:'2026-05-20',hora:'15:10',tipo:'egreso',alumno:'Daniela Fuentes',seccion:'Salud B',especialidad:'Salud',detalle:'Traslado a otro centro',usuario:'admin'},
+  {id:11,fecha:'2026-05-20',hora:'09:30',tipo:'nota',alumno:'Eduardo Ramírez',seccion:'Electrónica B',especialidad:'Electrónica',detalle:'Permiso especial aprobado',usuario:'admin'},
+  {id:12,fecha:'2026-05-19',hora:'07:50',tipo:'ingreso',alumno:'Isabella Morales',seccion:'Contabilidad C',especialidad:'Contabilidad',detalle:'Nuevo ingreso registrado',usuario:'admin'},
+];
+
+const BADGE={
+  ingreso:{l:'Ingreso',c:'b-ingreso'},
+  egreso:{l:'Egreso',c:'b-egreso'},
+  cambio:{l:'Cambio',c:'b-cambio'},
+  matricula:{l:'Matrícula',c:'b-matricula'},
+  nota:{l:'Nota',c:'b-nota'},
+};
+
+let filtro='all', pg_=1, pp=15;
+
+function setFilter(f,btn){
+  filtro=f; pg_=1;
+  document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render(){
+  const q=document.getElementById('sq').value.toLowerCase();
+  let d=DATA.filter(r=>{
+    const mt=filtro==='all'||r.tipo===filtro;
+    const mq=!q||r.alumno.toLowerCase().includes(q)||r.seccion.toLowerCase().includes(q)||r.especialidad.toLowerCase().includes(q);
+    return mt&&mq;
+  });
+  // counters
+  document.getElementById('cTotal').textContent=DATA.length;
+  document.getElementById('cIngresos').textContent=DATA.filter(r=>r.tipo==='ingreso').length;
+  document.getElementById('cEgresos').textContent=DATA.filter(r=>r.tipo==='egreso').length;
+  document.getElementById('cCambios').textContent=DATA.filter(r=>r.tipo==='cambio').length;
+  const tot=d.length, tp=Math.max(1,Math.ceil(tot/pp));
+  pg_=Math.min(pg_,tp);
+  const sl=d.slice((pg_-1)*pp,pg_*pp);
+  const tb=document.getElementById('tbody');
+  const emp=document.getElementById('empty');
+  if(!sl.length){tb.innerHTML='';emp.style.display='block';}
+  else{
+    emp.style.display='none';
+    tb.innerHTML=sl.map(r=>{
+      const b=BADGE[r.tipo]||{l:r.tipo,c:''};
+      return`<tr>
+        <td><span class="idx">${r.id}</span></td>
+        <td class="td-mono">${r.fecha}<br><span style="color:var(--txt3)">${r.hora}</span></td>
+        <td><span class="badge ${b.c}">${b.l}</span></td>
+        <td class="td-main">${r.alumno}</td>
+        <td>${r.seccion}</td>
+        <td>${r.especialidad}</td>
+        <td style="max-width:160px;font-size:11px;color:var(--txt3);">${r.detalle}</td>
+        <td class="td-mono">${r.usuario}</td>
+      </tr>`;
+    }).join('');
+  }
+  const from=tot?((pg_-1)*pp+1):0,to=Math.min(pg_*pp,tot);
+  document.getElementById('pinfo').textContent=`${from}–${to} de ${tot} registros`;
+  document.getElementById('bprev').disabled=pg_<=1;
+  document.getElementById('bnext').disabled=pg_>=tp;
+}
+
+function pg(d){pg_+=d;render();}
+
+function exportCSV(){
+  const rows=[['#','Fecha','Hora','Tipo','Alumno','Sección','Especialidad','Detalle','Usuario']];
+  DATA.forEach(r=>rows.push([r.id,r.fecha,r.hora,r.tipo,r.alumno,r.seccion,r.especialidad,r.detalle,r.usuario]));
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='bitacora_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('Bitácora exportada');
+}
+
+function toast(msg){
+  const w=document.getElementById('tw');
+  const t=document.createElement('div');
+  t.className='toast ok';
+  t.innerHTML=`<i class="bi bi-check-circle-fill"></i><span>${msg}</span>`;
+  w.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);},3000);
+}
+
+render();
+</script>
+</body>
+</html>

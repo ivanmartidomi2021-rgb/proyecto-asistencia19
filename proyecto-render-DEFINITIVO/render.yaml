@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: demo-asistencia
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      # IMPORTANTE: Render da la URL como "postgres://usuario:pass@host:puerto/basededatos"
+      # pero Spring Boot necesita el prefijo "jdbc:postgresql://...".
+      # Copia la "External Database URL" desde tu base de datos en Render,
+      # cambia "postgres://" por "jdbc:postgresql://" y pegala aqui como DATABASE_URL.
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: demo-asistencia-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: demo-asistencia-db
+          property: password
+
+databases:
+  - name: demo-asistencia-db
+    plan: free

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Asistencias | Sistema Escolar</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+            --bg-base: #f0f4ff;
+            --bg-surface: rgba(255,255,255,0.95);
+            --text-dark: #1a1a2e;
+            --text-mid: #4a4a6a;
+            --text-light: #8a8aaa;
+            --border-light: rgba(0,0,0,0.08);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.1);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+            --r-sm: 12px;
+            --r-md: 16px;
+            --r-lg: 24px;
+            --font: 'Outfit', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-base);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Fondo animado */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.06) 0%, transparent 50%);
+            animation: gradientFloat 25s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes gradientFloat {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(3%, -3%) rotate(5deg); }
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tarjeta principal */
+        .main-card {
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            border-radius: var(--r-lg);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end), var(--gradient-start));
+            background-size: 200% 100%;
+            animation: gradientSlide 3s linear infinite;
+        }
+
+        @keyframes gradientSlide {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .header p {
+            color: var(--text-light);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        /* Botones */
+        .btn-dashboard {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--r-sm);
+            color: var(--text-mid);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-dashboard:hover {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            border-color: transparent;
+        }
+
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: var(--r-sm);
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--r-md);
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card i {
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .stat-card .stat-label {
+            color: var(--text-light);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .text-success { color: #10b981; }
+        .text-danger { color: #ef4444; }
+        .text-primary { color: var(--gradient-start); }
+        .text-warning { color: #f59e0b; }
+
+        /* Filtro de fecha */
+        .fecha-filter {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--r-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .fecha-filter label {
+            font-weight: 600;
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fecha-filter input[type="date"] {
+            padding: 10px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--r-sm);
+            font-family: var(--font);
+            font-size: 14px;
+            transition: var(--transition);
+            outline: none;
+            background: white;
+        }
+
+        .fecha-filter input[type="date"]:focus {
+            border-color: var(--gradient-start);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .fecha-filter .btn-filtrar {
+            padding: 10px 28px;
+            background: var(--gradient-start);
+            color: white;
+            border: none;
+            border-radius: var(--r-sm);
+            font-weight: 600;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .fecha-filter .btn-filtrar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Formulario de asistencia */
+        .asistencia-form {
+            background: #f8fafc;
+            border-radius: var(--r-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-light);
+        }
+
+        .asistencia-form .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .asistencia-form .form-header h3 {
+            font-weight: 700;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .acciones-masivas {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-masivo {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+        }
+
+        .btn-masivo.btn-todos {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-masivo.btn-todos:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-masivo.btn-limpiar {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-masivo.btn-limpiar:hover {
+            background: #cbd5e1;
+            transform: scale(1.05);
+        }
+
+        .btn-masivo.btn-invertir {
+            background: var(--gradient-start);
+            color: white;
+        }
+
+        .btn-masivo.btn-invertir:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Tabla de alumnos */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--r-md);
+            border: 1px solid var(--border-light);
+            background: white;
+        }
+
+        .table {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+        }
+
+        .table thead th {
+            padding: 14px 16px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-mid);
+            border-bottom: 2px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .table tbody tr {
+            transition: var(--transition);
+            animation: slideRow 0.3s ease-out backwards;
+        }
+
+        .table tbody tr:nth-child(1) { animation-delay: 0.02s; }
+        .table tbody tr:nth-child(2) { animation-delay: 0.04s; }
+        .table tbody tr:nth-child(3) { animation-delay: 0.06s; }
+
+        @keyframes slideRow {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.04);
+        }
+
+        .table tbody td {
+            padding: 12px 16px;
+            vertical-align: middle;
+        }
+
+        /* Checkbox personalizado */
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .custom-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .custom-checkbox .checkmark {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+            background: white;
+        }
+
+        .custom-checkbox input:checked + .checkmark {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-color: var(--gradient-start);
+        }
+
+        .custom-checkbox input:checked + .checkmark::after {
+            content: '✓';
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .custom-checkbox .checkmark:hover {
+            border-color: var(--gradient-start);
+            transform: scale(1.05);
+        }
+
+        .custom-checkbox .alumno-info {
+            font-weight: 500;
+        }
+
+        .custom-checkbox .alumno-detail {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* Estado badge */
+        .estado-badge {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .estado-badge.presente {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .estado-badge.ausente {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Bitácora */
+        .bitacora-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-family: var(--font);
+            font-size: 13px;
+            transition: var(--transition);
+            outline: none;
+            background: white;
+        }
+
+        .bitacora-input:focus {
+            border-color: var(--gradient-start);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Botón guardar */
+        .btn-guardar {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            border-radius: var(--r-sm);
+            font-weight: 700;
+            font-size: 16px;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-guardar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-guardar:active {
+            transform: scale(0.98);
+        }
+
+        /* Empty state */
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .footer-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+
+            .main-card { padding: 1.2rem; }
+
+            .header { flex-direction: column; align-items: stretch; }
+            .header-actions { flex-direction: column; }
+
+            .fecha-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .asistencia-form .form-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .acciones-masivas {
+                justify-content: center;
+            }
+
+            .table thead th,
+            .table tbody td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 0.5rem; }
+
+            .main-card { padding: 0.8rem; border-radius: var(--r-md); }
+
+            .header h1 { font-size: 20px; }
+            .header-icon { width: 40px; height: 40px; font-size: 20px; }
+
+            .stat-card .stat-number { font-size: 20px; }
+
+            .btn-masivo {
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+
+            .custom-checkbox .checkmark {
+                width: 20px;
+                height: 20px;
+            }
+
+            .custom-checkbox .alumno-info {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="main-card">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-left">
+                <div class="header-icon">
+                    <i class="bi bi-clipboard2-check-fill"></i>
+                </div>
+                <div>
+                    <h1>Control de Asistencias</h1>
+                    <p><i class="bi bi-calendar3"></i> Marca rápido · Gestión eficiente</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="/dashboard" class="btn-dashboard">
+                    <i class="bi bi-house-door-fill"></i> Dashboard
+                </a>
+                <button class="btn-primary-gradient" onclick="window.print()">
+                    <i class="bi bi-printer-fill"></i> Imprimir
+                </button>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="bi bi-people-fill text-primary"></i>
+                <p class="stat-number" th:text="${totalAlumnos}">0</p>
+                <p class="stat-label">Total Alumnos</p>
+            </div>
+            <div class="stat-card">
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <p class="stat-number text-success" th:text="${presentes}">0</p>
+                <p class="stat-label">Presentes</p>
+            </div>
+            <div class="stat-card">
+                <i class="bi bi-x-circle-fill text-danger"></i>
+                <p class="stat-number text-danger" th:text="${ausentes}">0</p>
+                <p class="stat-label">Ausentes</p>
+            </div>
+            <div class="stat-card">
+                <i class="bi bi-calendar-week text-warning"></i>
+                <p class="stat-number" th:text="${#temporals.format(fechaSeleccionada, 'dd/MM/yyyy')}">--</p>
+                <p class="stat-label">Fecha</p>
+            </div>
+        </div>
+
+        <!-- FILTRO POR FECHA -->
+        <form method="get" action="/asistencias" class="fecha-filter">
+            <label>
+                <i class="bi bi-calendar-event-fill"></i>
+                Seleccionar fecha:
+            </label>
+            <input type="date" name="fecha" th:value="${#temporals.format(fechaSeleccionada, 'yyyy-MM-dd')}" required>
+            <button type="submit" class="btn-filtrar">
+                <i class="bi bi-search"></i> Filtrar
+            </button>
+            <a href="/asistencias" class="btn-dashboard" style="margin-left: auto;">
+                <i class="bi bi-arrow-clockwise"></i> Hoy
+            </a>
+        </form>
+
+        <!-- FORMULARIO DE ASISTENCIA -->
+        <form th:action="@{/guardarAsistencia}" method="post" id="formAsistencia">
+            <input type="hidden" name="fecha" th:value="${#temporals.format(fechaSeleccionada, 'yyyy-MM-dd')}">
+
+            <div class="asistencia-form">
+                <div class="form-header">
+                    <h3>
+                        <i class="bi bi-person-check-fill" style="color: var(--gradient-start);"></i>
+                        Marcar Asistencia
+                    </h3>
+                    <div class="acciones-masivas">
+                        <button type="button" class="btn-masivo btn-todos" id="marcarTodos">
+                            <i class="bi bi-check-all"></i> Todos Presentes
+                        </button>
+                        <button type="button" class="btn-masivo btn-limpiar" id="limpiarTodos">
+                            <i class="bi bi-x-lg"></i> Limpiar
+                        </button>
+                        <button type="button" class="btn-masivo btn-invertir" id="invertirSeleccion">
+                            <i class="bi bi-arrow-repeat"></i> Invertir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla de alumnos -->
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">#</th>
+                                <th>Alumno</th>
+                                <th style="width: 120px; text-align: center;">Asistencia</th>
+                                <th>Bitácora / Observación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="alumno, iter : ${alumnos}">
+                                <td>
+                                    <span class="badge bg-light text-dark" th:text="${iter.index + 1}">1</span>
+                                </td>
+                                <td>
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox"
+                                               th:id="'alumno_' + ${alumno.idAlumno}"
+                                               th:name="alumnosPresentes"
+                                               th:value="${alumno.idAlumno}"
+                                               th:checked="${asistenciaMap.containsKey(alumno.idAlumno) and asistenciaMap.get(alumno.idAlumno) == 'Presente'}">
+                                        <label th:for="'alumno_' + ${alumno.idAlumno}" class="checkmark"></label>
+                                        <div>
+                                            <div class="alumno-info" th:text="${alumno.nombres + ' ' + alumno.apellidos}">Nombre</div>
+                                            <div class="alumno-detail">
+                                                <span th:text="${alumno.grado}">1°</span> ·
+                                                <span th:text="'Sección ' + ${alumno.seccion}">A</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="text-align: center;">
+                                    <span class="estado-badge presente" 
+                                          th:if="${asistenciaMap.containsKey(alumno.idAlumno) and asistenciaMap.get(alumno.idAlumno) == 'Presente'}">
+                                        <i class="bi bi-check-circle-fill"></i> Presente
+                                    </span>
+                                    <span class="estado-badge ausente" 
+                                          th:if="${not asistenciaMap.containsKey(alumno.idAlumno) or asistenciaMap.get(alumno.idAlumno) == 'Ausente'}">
+                                        <i class="bi bi-x-circle-fill"></i> Ausente
+                                    </span>
+                                </td>
+                                <td>
+                                    <input type="text" 
+                                           class="bitacora-input" 
+                                           th:name="'bitacora_' + ${alumno.idAlumno}"
+                                           placeholder="Observación..."
+                                           th:value="${asistenciaMap.containsKey(alumno.idAlumno) ? asistenciaMap.get(alumno.idAlumno + '_bitacora') : ''}">
+                                </td>
+                            </tr>
+
+                            <!-- Empty state -->
+                            <tr th:if="${alumnos.isEmpty()}">
+                                <td colspan="4">
+                                    <div class="empty-state">
+                                        <i class="bi bi-people"></i>
+                                        <p>No hay alumnos registrados en el sistema</p>
+                                        <a href="/alumnos/nuevo" class="btn-primary-gradient" style="display:inline-flex; margin-top: 10px;">
+                                            <i class="bi bi-plus-circle-fill"></i> Agregar Alumnos
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bitácora general -->
+                <div style="margin-top: 1rem;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 6px;">
+                        <i class="bi bi-journal-text"></i> Bitácora general (opcional)
+                    </label>
+                    <input type="text" name="bitacora" class="bitacora-input" 
+                           placeholder="Ej: Clase teórica sobre fracciones, todos participaron activamente..."
+                           style="padding: 12px; font-size: 14px;">
+                </div>
+            </div>
+
+            <!-- Botón guardar -->
+            <button type="submit" class="btn-guardar" id="btnGuardar">
+                <i class="bi bi-save-fill"></i>
+                Guardar Asistencia del día
+            </button>
+        </form>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="footer-status">
+                <span class="dot"></span>
+                Sistema en línea · Todos los servicios operativos
+            </div>
+            <div>
+                <span style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <span><i class="bi bi-database"></i> PostgreSQL</span>
+                    <span><i class="bi bi-git-branch"></i> v2.1.0</span>
+                    <span>Sistema Escolar © 2026</span>
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    (function() {
+        // 📌 MARCAR TODOS COMO PRESENTES
+        document.getElementById('marcarTodos').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('input[name="alumnosPresentes"]');
+            checkboxes.forEach(cb => cb.checked = true);
+            actualizarEstados();
+        });
+
+        // 📌 LIMPIAR TODOS (marcar como ausentes)
+        document.getElementById('limpiarTodos').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('input[name="alumnosPresentes"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            actualizarEstados();
+        });
+
+        // 📌 INVERTIR SELECCIÓN
+        document.getElementById('invertirSeleccion').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('input[name="alumnosPresentes"]');
+            checkboxes.forEach(cb => cb.checked = !cb.checked);
+            actualizarEstados();
+        });
+
+        // 📌 ACTUALIZAR ESTADOS VISUALES AL CAMBIAR CHECKBOX
+        function actualizarEstados() {
+            const checkboxes = document.querySelectorAll('input[name="alumnosPresentes"]');
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                const estadoSpan = row.querySelector('.estado-badge');
+                if (cb.checked) {
+                    estadoSpan.className = 'estado-badge presente';
+                    estadoSpan.innerHTML = '<i class="bi bi-check-circle-fill"></i> Presente';
+                } else {
+                    estadoSpan.className = 'estado-badge ausente';
+                    estadoSpan.innerHTML = '<i class="bi bi-x-circle-fill"></i> Ausente';
+                }
+            });
+
+            // Actualizar estadísticas
+            const total = document.querySelectorAll('input[name="alumnosPresentes"]').length;
+            const presentes = document.querySelectorAll('input[name="alumnosPresentes"]:checked').length;
+            const ausentes = total - presentes;
+
+            document.querySelector('.stat-card .text-success').parentElement.querySelector('.stat-number').textContent = presentes;
+            document.querySelector('.stat-card .text-danger').parentElement.querySelector('.stat-number').textContent = ausentes;
+        }
+
+        // 📌 ESCUCHAR CAMBIOS EN CHECKBOXES
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.matches('input[name="alumnosPresentes"]')) {
+                actualizarEstados();
+            }
+        });
+
+        // 📌 CONFIRMAR GUARDADO
+        document.getElementById('formAsistencia').addEventListener('submit', function(e) {
+            const checkboxes = document.querySelectorAll('input[name="alumnosPresentes"]');
+            const presentes = document.querySelectorAll('input[name="alumnosPresentes"]:checked').length;
+            const total = checkboxes.length;
+
+            if (total === 0) {
+                e.preventDefault();
+                alert('⚠️ No hay alumnos registrados para marcar asistencia.');
+                return;
+            }
+
+            const confirmar = confirm(
+                `📊 Resumen de asistencia:\n` +
+                `Total alumnos: ${total}\n` +
+                `Presentes: ${presentes}\n` +
+                `Ausentes: ${total - presentes}\n\n` +
+                `¿Guardar esta asistencia?`
+            );
+
+            if (!confirmar) {
+                e.preventDefault();
+            } else {
+                const btn = document.getElementById('btnGuardar');
+                btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Guardando...';
+                btn.disabled = true;
+            }
+        });
+
+        // 📌 INICIALIZAR ESTADOS
+        actualizarEstados();
+    })();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

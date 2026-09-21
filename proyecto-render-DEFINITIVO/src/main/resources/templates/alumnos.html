@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumnos | Sistema Escolar</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+            --bg-base: #f5f7fa;
+            --bg-surface: rgba(255,255,255,0.95);
+            --bg-elevated: #fafbff;
+            --text-dark: #1a1a2e;
+            --text-mid: #4a4a6a;
+            --text-light: #8a8aaa;
+            --border-light: rgba(0,0,0,0.08);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.1);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+            --r-sm: 12px;
+            --r-lg: 24px;
+            --font: 'Outfit', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-base);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.06) 0%, transparent 50%);
+            animation: gradientFloat 25s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes gradientFloat {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            100% { transform: translate(3%, -3%) rotate(5deg) scale(1.1); }
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; animation: fadeInUp 0.6s ease-out; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-to-dashboard {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 12px 28px; background: var(--bg-surface);
+            border: 1px solid var(--border-light); border-radius: var(--r-sm);
+            color: var(--text-mid); font-size: 14px; font-weight: 500;
+            text-decoration: none; transition: var(--transition);
+            margin-bottom: 2rem; box-shadow: var(--shadow-sm);
+        }
+        .back-to-dashboard:hover {
+            color: white; transform: translateX(-5px);
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            border-color: transparent;
+        }
+
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+            background: var(--bg-surface); padding: 1.5rem 2rem;
+            border-radius: var(--r-lg); border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .header-icon {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: white; animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .header h1 {
+            font-size: 24px; font-weight: 700;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { font-size: 14px; color: var(--text-light); }
+
+        .header-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .total-alumnos {
+            font-size: 14px; color: var(--text-light);
+            background: var(--bg-elevated); padding: 8px 20px;
+            border-radius: 20px; border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm); white-space: nowrap;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .total-alumnos i { color: var(--gradient-start); }
+
+        .btn-nuevo {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white; border: none; border-radius: var(--r-sm);
+            font-size: 14px; font-weight: 600; font-family: var(--font);
+            cursor: pointer; transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+        .btn-nuevo:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4); }
+
+        .table-wrapper {
+            background: var(--bg-surface); border-radius: var(--r-lg);
+            border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); overflow: hidden;
+        }
+        .table-scroll { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        thead {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border-bottom: 2px solid var(--border-light);
+        }
+        thead th {
+            padding: 16px 18px; text-align: left; font-size: 11px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--text-mid); white-space: nowrap;
+        }
+        tbody tr { border-bottom: 1px solid var(--border-light); transition: var(--transition); }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05)); }
+        tbody td { padding: 14px 18px; vertical-align: middle; font-size: 13.5px; }
+
+        .col-id { font-family: var(--mono); font-weight: 600; color: var(--gradient-start); font-size: 13px; }
+        .col-nombres { font-weight: 600; color: var(--text-dark); }
+        .col-apellidos { color: var(--text-mid); }
+        .col-grado {
+            font-weight: 600; color: var(--gradient-start);
+            background: rgba(102, 126, 234, 0.1); padding: 4px 14px;
+            border-radius: 12px; display: inline-block; font-size: 12.5px;
+        }
+        .col-seccion {
+            font-weight: 600; color: #764ba2;
+            background: rgba(118, 75, 162, 0.1); padding: 4px 14px;
+            border-radius: 12px; display: inline-block; font-size: 12.5px;
+        }
+        .col-especialidad { color: var(--text-mid); }
+
+        .acciones { display: flex; gap: 8px; align-items: center; }
+        .btn-accion {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 34px; height: 34px; border: none; border-radius: 8px;
+            font-size: 14px; cursor: pointer; transition: var(--transition);
+            text-decoration: none; color: white;
+        }
+        .btn-editar { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); }
+        .btn-editar:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4); }
+        .btn-eliminar { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
+        .btn-eliminar:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4); }
+
+        .empty-state { padding: 60px 40px; text-align: center; color: var(--text-light); }
+        .empty-state i {
+            font-size: 56px; display: block; margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .footer {
+            margin-top: 2rem; padding: 1.5rem 2rem; background: var(--bg-surface);
+            border-radius: var(--r-lg); border: 1px solid var(--border-light);
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 12px; color: var(--text-light); font-family: var(--mono);
+            flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);
+        }
+        .footer-status { display: flex; align-items: center; gap: 8px; }
+        .footer-status .dot {
+            width: 8px; height: 8px; border-radius: 50%; background: #10b981;
+            animation: blink 2s ease-in-out infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(20, 20, 40, 0.5);
+            backdrop-filter: blur(6px); display: flex; align-items: center;
+            justify-content: center; padding: 1rem; z-index: 1000;
+            opacity: 0; visibility: hidden; transition: var(--transition);
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal {
+            background: var(--bg-surface); border-radius: var(--r-lg);
+            box-shadow: var(--shadow-lg); width: 100%; max-width: 620px;
+            max-height: 90vh; overflow-y: auto;
+            transform: translateY(30px) scale(0.95); transition: var(--transition);
+            border: 1px solid var(--border-light);
+        }
+        .modal-overlay.active .modal { transform: translateY(0) scale(1); }
+
+        .modal-header {
+            display: flex; align-items: center; gap: 16px;
+            padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-light);
+            position: sticky; top: 0; background: var(--bg-surface); z-index: 2;
+        }
+        .modal-header-icon {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: white; flex-shrink: 0;
+        }
+        .modal-header h2 { font-size: 20px; font-weight: 700; color: var(--text-dark); }
+        .modal-header p { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+
+        .modal-close {
+            background: transparent; border: none; width: 36px; height: 36px;
+            border-radius: 50%; font-size: 22px; color: var(--text-light);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: var(--transition); flex-shrink: 0;
+        }
+        .modal-close:hover { background: #fee2e2; color: #dc2626; transform: rotate(90deg); }
+
+        .modal-body { padding: 2rem; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label {
+            font-size: 13px; font-weight: 600; color: var(--text-mid);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .form-group label i { color: var(--gradient-start); font-size: 15px; }
+
+        .form-group input,
+        .form-group select {
+            padding: 11px 14px; border: 1px solid var(--border-light);
+            border-radius: var(--r-sm); font-family: var(--font);
+            font-size: 14px; color: var(--text-dark);
+            background: var(--bg-elevated); transition: var(--transition);
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--gradient-start); background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+        .form-group input::placeholder { color: var(--text-light); opacity: 0.6; }
+
+        .modal-footer {
+            display: flex; gap: 1rem; padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-light); justify-content: flex-end;
+            background: var(--bg-elevated); position: sticky; bottom: 0;
+        }
+        .btn-modal {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 11px 24px; border: none; border-radius: var(--r-sm);
+            font-size: 14px; font-weight: 600; font-family: var(--font);
+            cursor: pointer; transition: var(--transition);
+        }
+        .btn-modal-guardar {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+        .btn-modal-guardar:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4); }
+        .btn-modal-cancelar {
+            background: white; color: var(--text-mid); border: 1px solid var(--border-light);
+        }
+        .btn-modal-cancelar:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header { flex-direction: column; align-items: stretch; padding: 1rem; }
+            .header-left { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .header-actions { flex-direction: column; width: 100%; }
+            .total-alumnos, .btn-nuevo, .back-to-dashboard { width: 100%; justify-content: center; }
+            table { min-width: 650px; font-size: 13px; }
+            thead th, tbody td { padding: 10px 12px; font-size: 12px; }
+            .footer { flex-direction: column; text-align: center; padding: 1rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .modal-body { padding: 1.25rem; }
+            .modal-header, .modal-footer { padding: 1rem 1.25rem; }
+            .modal-footer { flex-direction: column-reverse; }
+            .btn-modal { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <a href="/dashboard" class="back-to-dashboard">
+        <i class="bi bi-arrow-left-circle-fill"></i>
+        <span>Volver al Dashboard</span>
+    </a>
+
+    <div class="header">
+        <div class="header-left">
+            <div class="header-icon"><i class="bi bi-people-fill"></i></div>
+            <div>
+                <h1>👨‍🎓 Lista de Alumnos</h1>
+                <p>Todos los estudiantes registrados en el sistema</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="total-alumnos">
+                <i class="bi bi-people-fill"></i>
+                <span th:text="${totalAlumnos}">0</span> estudiantes
+            </div>
+            <button type="button" class="btn-nuevo" onclick="abrirModalNuevo()">
+                <i class="bi bi-plus-circle-fill"></i> Nuevo Alumno
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th style="text-align:center">Grado</th>
+                        <th style="text-align:center">Sección</th>
+                        <th>Especialidad</th>
+                        <th style="text-align:center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="alumno : ${alumnos}">
+                        <td class="col-id" th:text="${alumno.idAlumno}">1</td>
+                        <td class="col-nombres" th:text="${alumno.nombres}">Juan</td>
+                        <td class="col-apellidos" th:text="${alumno.apellidos}">Pérez</td>
+                        <td style="text-align:center">
+                            <span class="col-grado" th:text="${alumno.grado}">1°</span>
+                        </td>
+                        <td style="text-align:center">
+                            <span class="col-seccion" th:text="${alumno.seccion}">A</span>
+                        </td>
+                        <td class="col-especialidad">
+                            <span th:each="esp : ${especialidades}"
+                                  th:if="${esp.idEspecialidad == alumno.idEspecialidad}"
+                                  th:text="${esp.nombre}">-</span>
+                        </td>
+                        <td>
+                            <div class="acciones" style="justify-content:center">
+                                <button type="button" class="btn-accion btn-editar" title="Editar"
+                                        th:attr="data-id=${alumno.idAlumno},
+                                                 data-nombres=${alumno.nombres},
+                                                 data-apellidos=${alumno.apellidos},
+                                                 data-grado=${alumno.grado},
+                                                 data-seccion=${alumno.seccion},
+                                                 data-especialidad=${alumno.idEspecialidad}"
+                                        onclick="abrirModalEditar(this)">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <a th:href="@{/alumnos/eliminar/{id}(id=${alumno.idAlumno})}"
+                                   class="btn-accion btn-eliminar" title="Eliminar"
+                                   onclick="return confirm('¿Estás seguro de eliminar este alumno?')">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${alumnos.isEmpty()}">
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="bi bi-people"></i>
+                                <p>No hay alumnos registrados</p>
+                                <button type="button" class="btn-nuevo" style="margin-top:1rem;" onclick="abrirModalNuevo()">
+                                    <i class="bi bi-plus-circle-fill"></i> Agregar el primer alumno
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-status">
+            <span class="dot"></span>
+            Sistema en línea · Todos los servicios operativos
+        </div>
+        <div>Sistema Escolar © 2026</div>
+    </div>
+
+</div>
+
+<!-- 🪟 MODAL -->
+<div class="modal-overlay" id="modalAlumno">
+    <div class="modal" onclick="event.stopPropagation()">
+
+        <div class="modal-header">
+            <div class="modal-header-icon">
+                <i class="bi bi-person-plus-fill" id="modalIcon"></i>
+            </div>
+            <div style="flex:1">
+                <h2 id="modalTitulo">Nuevo Alumno</h2>
+                <p id="modalSubtitulo">Completa los datos del estudiante</p>
+            </div>
+            <button type="button" class="modal-close" onclick="cerrarModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form th:action="@{/alumnos/guardar}" th:object="${alumno}" method="post" id="formAlumno">
+
+            <input type="hidden" th:field="*{idAlumno}" id="inputId">
+
+            <div class="modal-body">
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="nombres"><i class="bi bi-person-fill"></i> Nombres</label>
+                        <input type="text" id="nombres" th:field="*{nombres}"
+                               placeholder="Ej. Juan Carlos" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apellidos"><i class="bi bi-person-badge-fill"></i> Apellidos</label>
+                        <input type="text" id="apellidos" th:field="*{apellidos}"
+                               placeholder="Ej. Pérez Ramírez" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grado"><i class="bi bi-mortarboard-fill"></i> Grado</label>
+                        <input type="text" id="grado" th:field="*{grado}"
+                               placeholder="Ej. 1°" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seccion"><i class="bi bi-bookmark-fill"></i> Sección</label>
+                        <input type="text" id="seccion" th:field="*{seccion}"
+                               placeholder="Ej. A" required autocomplete="off">
+                    </div>
+
+                    <!-- 🔥 SELECT CON ID NUMÉRICO -->
+                    <div class="form-group full">
+                        <label for="idEspecialidad"><i class="bi bi-award-fill"></i> Especialidad</label>
+                        <select id="idEspecialidad" th:field="*{idEspecialidad}" required>
+                            <option value="">-- Selecciona una especialidad --</option>
+                            <option th:each="esp : ${especialidades}"
+                                    th:value="${esp.idEspecialidad}"
+                                    th:text="${esp.nombre}">Contabilidad</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-modal btn-modal-cancelar" onclick="cerrarModal()">
+                    <i class="bi bi-x-circle-fill"></i> Cancelar
+                </button>
+                <button type="submit" class="btn-modal btn-modal-guardar">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span id="btnGuardarTexto">Guardar Alumno</span>
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('modalAlumno');
+    const form = document.getElementById('formAlumno');
+    const inputId = document.getElementById('inputId');
+    const titulo = document.getElementById('modalTitulo');
+    const subtitulo = document.getElementById('modalSubtitulo');
+    const icono = document.getElementById('modalIcon');
+    const btnTexto = document.getElementById('btnGuardarTexto');
+
+    function abrirModalNuevo() {
+        form.reset();
+        inputId.value = '';
+        titulo.textContent = 'Nuevo Alumno';
+        subtitulo.textContent = 'Completa los datos del estudiante';
+        icono.className = 'bi bi-person-plus-fill';
+        btnTexto.textContent = 'Guardar Alumno';
+        abrirModal();
+    }
+
+    function abrirModalEditar(btn) {
+        form.reset();
+        inputId.value = btn.dataset.id || '';
+        document.getElementById('nombres').value = btn.dataset.nombres || '';
+        document.getElementById('apellidos').value = btn.dataset.apellidos || '';
+        document.getElementById('grado').value = btn.dataset.grado || '';
+        document.getElementById('seccion').value = btn.dataset.seccion || '';
+        document.getElementById('idEspecialidad').value = btn.dataset.especialidad || '';
+
+        titulo.textContent = 'Editar Alumno';
+        subtitulo.textContent = 'Modifica los datos del estudiante';
+        icono.className = 'bi bi-pencil-square';
+        btnTexto.textContent = 'Actualizar Alumno';
+        abrirModal();
+    }
+
+    function abrirModal() {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => {
+            const first = modal.querySelector('input[type="text"]');
+            if (first) first.focus();
+        }, 200);
+    }
+
+    function cerrarModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) cerrarModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) cerrarModal();
+    });
+</script>
+
+</body>
+</html>

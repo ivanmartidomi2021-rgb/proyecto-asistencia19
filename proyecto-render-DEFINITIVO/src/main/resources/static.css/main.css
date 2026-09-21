@@ -1,0 +1,102 @@
+
+/* ===================================================
+   main.css - Estilos extraídos de las plantillas HTML
+   =================================================== */
+
+
+/* ===== especialidades.html ===== */
+body{
+    background:#f4f6f9;
+    font-family:Arial, Helvetica, sans-serif;
+    padding:30px;
+}
+.container-box{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+h1{
+    color:#5b21b6;
+    margin-bottom:25px;
+    font-weight:bold;
+}
+table{
+    border-radius:15px;
+    overflow:hidden;
+}
+.btn-dashboard{
+    margin-bottom:20px;
+}
+.icono{
+    font-size:22px;
+    color:#7c3aed;
+}
+
+
+/* ===== login.html ===== */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+body{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+}
+.login-box{
+    width: 350px;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    text-align: center;
+}
+.login-box h2{
+    margin-bottom: 30px;
+    color: #1e3c72;
+}
+.input-box{
+    margin-bottom: 20px;
+}
+.input-box input{
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.3s;
+    font-size: 15px;
+}
+.input-box input:focus{
+    border-color: #2a5298;
+    box-shadow: 0 0 8px rgba(42,82,152,0.4);
+}
+button{
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #1e3c72;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+button:hover{
+    background: #16325c;
+    transform: scale(1.03);
+}
+.error{
+    color: red;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+
+/* ===== usuarios.html ===== */
+/* Sin estilos — este archivo no tenía <style> */
