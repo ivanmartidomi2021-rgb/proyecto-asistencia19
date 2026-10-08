@@ -14,33 +14,33 @@
         }
 
         :root {
-            /* ===== PALETA RENOVADA - TONOS CÁLIDOS Y MODERNOS ===== */
-            --bg-primary: #0d0f14;
-            --bg-secondary: #131620;
-            --bg-card: #1a1e2e;
-            --bg-card-hover: #232840;
-            --bg-input: #232840;
-            --text-primary: #f0f3fa;
-            --text-secondary: #8b95b5;
-            --text-muted: #4a5068;
-            --border-color: rgba(255, 255, 255, 0.05);
-            --border-glow: rgba(139, 92, 246, 0.3);
-            --primary: #8B5CF6;
+            /* ===== PALETA RENOVADA - TONOS VIBRANTES Y MODERNOS ===== */
+            --bg-primary: #0a0c12;
+            --bg-secondary: #11141d;
+            --bg-card: #171b28;
+            --bg-card-hover: #1f2436;
+            --bg-input: #1f2436;
+            --text-primary: #f2f5ff;
+            --text-secondary: #8892b0;
+            --text-muted: #495070;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(124, 58, 237, 0.35);
+            --primary: #7C3AED;
             --primary-light: #a78bfa;
-            --primary-dark: #6d3fd9;
-            --secondary: #2DD4BF;
-            --secondary-light: #5eead4;
-            --accent: #F472B6;
-            --accent-light: #f9a8d4;
-            --success: #34D399;
-            --warning: #FBBF24;
-            --danger: #FB7185;
-            --info: #60A5FA;
+            --primary-dark: #5b21b6;
+            --secondary: #06B6D4;
+            --secondary-light: #22d3ee;
+            --accent: #EC4899;
+            --accent-light: #f472b6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
             --radius: 12px;
             --radius-lg: 16px;
             --radius-xl: 20px;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+            --shadow-glow: 0 0 60px rgba(124, 58, 237, 0.12);
             --font: 'Inter', sans-serif;
             --mono: 'JetBrains Mono', monospace;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -71,8 +71,8 @@
             position: fixed;
             inset: 0;
             background-image:
-                repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(139, 92, 246, 0.025) 60px),
-                repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(139, 92, 246, 0.025) 60px);
+                repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(124, 58, 237, 0.03) 60px),
+                repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(124, 58, 237, 0.03) 60px);
             z-index: 0;
             pointer-events: none;
         }
@@ -88,14 +88,14 @@
         .bg-glow.g1 {
             width: 600px;
             height: 600px;
-            background: rgba(139, 92, 246, 0.06);
+            background: rgba(124, 58, 237, 0.08);
             top: -200px;
             right: -100px;
         }
         .bg-glow.g2 {
             width: 500px;
             height: 500px;
-            background: rgba(45, 212, 191, 0.05);
+            background: rgba(6, 182, 212, 0.06);
             bottom: -200px;
             left: -100px;
             animation-delay: -7s;
@@ -103,7 +103,7 @@
         .bg-glow.g3 {
             width: 400px;
             height: 400px;
-            background: rgba(244, 114, 182, 0.04);
+            background: rgba(236, 72, 153, 0.05);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -121,7 +121,7 @@
             top: 0;
             bottom: 0;
             width: 240px;
-            background: rgba(19, 22, 32, 0.96);
+            background: rgba(17, 20, 29, 0.97);
             backdrop-filter: blur(20px);
             border-right: 1px solid var(--border-color);
             z-index: 100;
@@ -151,20 +151,20 @@
             font-size: 20px;
             color: #fff;
             font-weight: 700;
-            box-shadow: 0 0 40px rgba(139, 92, 246, 0.25);
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.3);
             animation: pulseIcon 3s ease-in-out infinite;
         }
 
         @keyframes pulseIcon {
-            0%, 100% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.25); }
-            50% { box-shadow: 0 0 60px rgba(139, 92, 246, 0.45); }
+            0%, 100% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(124, 58, 237, 0.5); }
         }
 
         .brand-text {
             font-size: 18px;
             font-weight: 700;
             letter-spacing: -0.5px;
-            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -217,7 +217,7 @@
         .nav-link.active {
             color: var(--primary-light);
             border-left-color: var(--primary);
-            background: rgba(139, 92, 246, 0.08);
+            background: rgba(124, 58, 237, 0.1);
         }
 
         .nav-link.active::before {
@@ -260,7 +260,7 @@
 
         .nav-link.logout:hover {
             color: var(--danger);
-            background: rgba(251, 113, 133, 0.08);
+            background: rgba(239, 68, 68, 0.1);
         }
 
         .main {
@@ -279,7 +279,7 @@
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
-            background: rgba(13, 15, 20, 0.85);
+            background: rgba(10, 12, 18, 0.85);
             backdrop-filter: blur(16px);
             position: sticky;
             top: 0;
@@ -312,8 +312,8 @@
         }
 
         @keyframes pulse-dot {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
-            50% { opacity: 0.4; box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { opacity: 0.4; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
         }
 
         .topbar-right {
@@ -333,15 +333,15 @@
             outline: none;
             width: 200px;
             transition: var(--transition);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b95b5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238892b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: 12px center;
         }
 
         .topbar-search:focus {
-            border-color: rgba(139, 92, 246, 0.4);
+            border-color: rgba(124, 58, 237, 0.5);
             width: 240px;
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.1);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.15);
         }
 
         .tb-btn {
@@ -364,7 +364,7 @@
             color: var(--text-primary);
             border-color: var(--border-glow);
             transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2);
         }
 
         .tb-btn .count {
@@ -402,7 +402,7 @@
         .avatar:hover {
             transform: scale(1.05);
             border-color: var(--primary);
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.35);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
         }
 
         .content {
@@ -495,19 +495,19 @@
         }
 
         .stat-card .stat-icon.purple {
-            background: rgba(139, 92, 246, 0.14);
-            color: var(--primary);
+            background: rgba(124, 58, 237, 0.16);
+            color: var(--primary-light);
         }
         .stat-card .stat-icon.green {
-            background: rgba(52, 211, 153, 0.14);
+            background: rgba(16, 185, 129, 0.16);
             color: var(--success);
         }
         .stat-card .stat-icon.red {
-            background: rgba(251, 113, 133, 0.14);
+            background: rgba(239, 68, 68, 0.16);
             color: var(--danger);
         }
         .stat-card .stat-icon.amber {
-            background: rgba(251, 191, 36, 0.14);
+            background: rgba(245, 158, 11, 0.16);
             color: var(--warning);
         }
 
@@ -544,12 +544,12 @@
 
         .stat-card .stat-trend.up {
             color: var(--success);
-            background: rgba(52, 211, 153, 0.1);
+            background: rgba(16, 185, 129, 0.12);
         }
 
         .stat-card .stat-trend.down {
             color: var(--danger);
-            background: rgba(251, 113, 133, 0.1);
+            background: rgba(239, 68, 68, 0.12);
         }
 
         .panels-grid {
@@ -591,7 +591,7 @@
         }
 
         .panel-title i {
-            color: var(--primary);
+            color: var(--primary-light);
         }
 
         .panel-link {
@@ -609,7 +609,7 @@
 
         .panel-link:hover {
             color: var(--primary-light);
-            background: rgba(139, 92, 246, 0.08);
+            background: rgba(124, 58, 237, 0.1);
         }
 
         .chart-container {
@@ -655,7 +655,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             animation: shimmer 2s ease-in-out infinite;
         }
 
@@ -700,7 +700,7 @@
         }
 
         .chart-periods button.active {
-            background: rgba(139, 92, 246, 0.18);
+            background: rgba(124, 58, 237, 0.2);
             color: var(--primary-light);
         }
 
@@ -748,19 +748,19 @@
         }
 
         .activity-icon.purple {
-            background: rgba(139, 92, 246, 0.14);
-            color: var(--primary);
+            background: rgba(124, 58, 237, 0.16);
+            color: var(--primary-light);
         }
         .activity-icon.green {
-            background: rgba(52, 211, 153, 0.14);
+            background: rgba(16, 185, 129, 0.16);
             color: var(--success);
         }
         .activity-icon.amber {
-            background: rgba(251, 191, 36, 0.14);
+            background: rgba(245, 158, 11, 0.16);
             color: var(--warning);
         }
         .activity-icon.red {
-            background: rgba(251, 113, 133, 0.14);
+            background: rgba(239, 68, 68, 0.16);
             color: var(--danger);
         }
 
@@ -840,7 +840,7 @@
 
         .ext-link-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             margin-top: 6px;
         }
@@ -861,7 +861,6 @@
         .ext-link-card:nth-child(1) { animation-delay: 0.1s; }
         .ext-link-card:nth-child(2) { animation-delay: 0.2s; }
         .ext-link-card:nth-child(3) { animation-delay: 0.3s; }
-        .ext-link-card:nth-child(4) { animation-delay: 0.4s; }
 
         .ext-link-card::before {
             content: '';
@@ -870,7 +869,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.08), transparent 70%);
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.1), transparent 70%);
             opacity: 0;
             transition: opacity 0.6s ease;
         }
@@ -890,7 +889,7 @@
             font-size: 28px;
             display: block;
             margin-bottom: 6px;
-            color: var(--primary);
+            color: var(--primary-light);
             transition: var(--transition);
         }
 
@@ -936,22 +935,22 @@
         }
 
         .toast.success {
-            border-color: rgba(52, 211, 153, 0.25);
+            border-color: rgba(16, 185, 129, 0.3);
         }
         .toast.success i {
             color: var(--success);
         }
         .toast.error {
-            border-color: rgba(251, 113, 133, 0.25);
+            border-color: rgba(239, 68, 68, 0.3);
         }
         .toast.error i {
             color: var(--danger);
         }
         .toast.info {
-            border-color: rgba(139, 92, 246, 0.25);
+            border-color: rgba(124, 58, 237, 0.3);
         }
         .toast.info i {
-            color: var(--primary);
+            color: var(--primary-light);
         }
 
         @keyframes slideToast {
@@ -971,7 +970,7 @@
         }
 
         .menu-toggle:hover {
-            color: var(--primary);
+            color: var(--primary-light);
         }
 
         .sidebar-overlay {
@@ -1201,21 +1200,21 @@
                         <div class="chart-row">
                             <span class="chart-label">Presentes</span>
                             <div class="chart-bar-track">
-                                <div class="chart-bar-fill" style="--width:87%;background:linear-gradient(90deg,#34D399,#10b981);"></div>
+                                <div class="chart-bar-fill" style="--width:87%;background:linear-gradient(90deg,#10B981,#059669);"></div>
                             </div>
                             <span class="chart-value">87%</span>
                         </div>
                         <div class="chart-row">
                             <span class="chart-label">Ausentes</span>
                             <div class="chart-bar-track">
-                                <div class="chart-bar-fill" style="--width:7.7%;background:linear-gradient(90deg,#FB7185,#e11d48);"></div>
+                                <div class="chart-bar-fill" style="--width:7.7%;background:linear-gradient(90deg,#EF4444,#dc2626);"></div>
                             </div>
                             <span class="chart-value">7.7%</span>
                         </div>
                         <div class="chart-row">
                             <span class="chart-label">Tardanzas</span>
                             <div class="chart-bar-track">
-                                <div class="chart-bar-fill" style="--width:5.2%;background:linear-gradient(90deg,#FBBF24,#f59e0b);"></div>
+                                <div class="chart-bar-fill" style="--width:5.2%;background:linear-gradient(90deg,#F59E0B,#d97706);"></div>
                             </div>
                             <span class="chart-value">5.2%</span>
                         </div>
@@ -1229,7 +1228,7 @@
                     </div>
                     <div class="top-students">
                         <div class="student-card">
-                            <div class="student-avatar" style="background:rgba(139,92,246,0.18);color:var(--primary);">AM</div>
+                            <div class="student-avatar" style="background:rgba(124,58,237,0.2);color:var(--primary-light);">AM</div>
                             <div class="student-info">
                                 <div class="name">Ana Martínez</div>
                                 <div class="specialty">Informática</div>
@@ -1237,7 +1236,7 @@
                             </div>
                         </div>
                         <div class="student-card">
-                            <div class="student-avatar" style="background:rgba(52,211,153,0.18);color:var(--success);">CR</div>
+                            <div class="student-avatar" style="background:rgba(16,185,129,0.2);color:var(--success);">CR</div>
                             <div class="student-info">
                                 <div class="name">Carlos Ruiz</div>
                                 <div class="specialty">Contabilidad</div>
@@ -1245,7 +1244,7 @@
                             </div>
                         </div>
                         <div class="student-card">
-                            <div class="student-avatar" style="background:rgba(251,191,36,0.18);color:var(--warning);">LG</div>
+                            <div class="student-avatar" style="background:rgba(245,158,11,0.2);color:var(--warning);">LG</div>
                             <div class="student-info">
                                 <div class="name">Laura Gómez</div>
                                 <div class="specialty">Mecánica</div>
@@ -1259,7 +1258,6 @@
             <div class="panel" style="margin-bottom:16px;">
                 <div class="panel-header">
                     <span class="panel-title"><i class="bi bi-activity"></i> Actividad reciente</span>
-                    <a href="/bitacora" class="panel-link" style="display:none;">Ver todo <i class="bi bi-chevron-right"></i></a>
                 </div>
                 <div class="activity-list">
                     <div class="activity-item">
@@ -1287,7 +1285,7 @@
 
             <div style="margin-top:6px;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-                    <i class="bi bi-box-arrow-up-right" style="color:var(--primary);"></i>
+                    <i class="bi bi-box-arrow-up-right" style="color:var(--primary-light);"></i>
                     <span style="font-size:13px;font-weight:600;">Acceso rápido a módulos</span>
                 </div>
                 <div class="ext-link-grid">
@@ -1431,7 +1429,7 @@
         }, 400);
 
         // ============================================
-        // KEYBOARD SHORTCUTS (actualizados sin las secciones eliminadas)
+        // KEYBOARD SHORTCUTS (solo módulos existentes)
         // ============================================
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key >= '1' && e.key <= '4') {
@@ -1458,7 +1456,7 @@
 
         console.log('🚀 EDUSYNC v3.0 cargado correctamente');
         console.log('💡 Atajos: Ctrl+1 Dashboard, Ctrl+2 Alumnos, Ctrl+3 Asistencias, Ctrl+4 Usuarios');
-        console.log('✨ Animaciones mejoradas, paleta renovada y secciones simplificadas');
+        console.log('✨ Paleta renovada, secciones simplificadas y experiencia optimizada');
     </script>
 
 </body>
