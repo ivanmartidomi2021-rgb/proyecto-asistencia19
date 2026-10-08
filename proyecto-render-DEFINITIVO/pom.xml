@@ -56,9 +56,7 @@
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
-        <!-- =============================================== -->
-        <!-- 📄 REPORTES PDF - iText 7                        -->
-        <!-- =============================================== -->
+        <!-- 📄 iText 7 - Para generar PDF -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
@@ -66,9 +64,7 @@
             <type>pom</type>
         </dependency>
 
-        <!-- =============================================== -->
-        <!-- 📊 REPORTES EXCEL - Apache POI                   -->
-        <!-- =============================================== -->
+        <!-- 📊 Apache POI - Para generar Excel -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -102,26 +98,21 @@
     <build>
         <plugins>
 
-            <!-- Spring Boot -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Java Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-
                 <configuration>
                     <annotationProcessorPaths>
-
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>1.18.38</version>
                         </path>
-
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
