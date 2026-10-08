@@ -32,7 +32,7 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Integer>
     // 📊 Contar asistencias de un alumno por estado
     long countByIdAlumnoAndEstado(Integer idAlumno, String estado);
 
-    // 🗑️ Eliminar asistencias por fecha (USAR CON CUIDADO)
+    // 🗑️ Eliminar asistencias por fecha
     @Modifying
     @Transactional
     @Query("DELETE FROM Asistencia a WHERE a.fecha = :fecha")
@@ -59,14 +59,9 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Integer>
     List<Object[]> findTopAusentes(@Param("fechaInicio") LocalDate fechaInicio,
                                    @Param("fechaFin") LocalDate fechaFin);
 
-    // ============================================================
-    // ✅ NUEVOS MÉTODOS PARA REPORTES POR RANGO DE FECHAS
-    // ============================================================
-
-    // 📊 Buscar asistencias de un alumno en un rango de fechas
+    // ✅ NUEVOS (para reportes por rango)
     List<Asistencia> findByIdAlumnoAndFechaBetween(
             Integer idAlumno, LocalDate inicio, LocalDate fin);
 
-    // 📊 Buscar todas las asistencias en un rango de fechas
     List<Asistencia> findByFechaBetween(LocalDate inicio, LocalDate fin);
 }
