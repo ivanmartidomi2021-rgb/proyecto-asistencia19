@@ -43,16 +43,10 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- 🔐 SPRING SECURITY (LOGIN, SESIONES, FILTROS) -->
+        <!-- 🔐 SPRING SECURITY -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <!-- 🔐 Thymeleaf + Spring Security (para usar sec:authorize en HTML) -->
-        <dependency>
-            <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
         <!-- PostgreSQL -->
@@ -62,7 +56,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- 📄 iText 7 - Para generar PDF -->
+        <!-- 📄 iText 7 -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
@@ -70,7 +64,7 @@
             <type>pom</type>
         </dependency>
 
-        <!-- 📊 Apache POI - Para generar Excel -->
+        <!-- 📊 Apache POI -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -96,12 +90,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
 
