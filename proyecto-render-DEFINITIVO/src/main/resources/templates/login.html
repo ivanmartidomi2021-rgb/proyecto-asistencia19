@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Sistema Escolar</title>
+    <title>Login</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body class="login-page">
@@ -23,7 +23,6 @@
         </form>
 
         <p class="error" th:if="${error}" th:text="${error}"></p>
-        <p class="exito" th:if="${logout}">Sesión cerrada correctamente</p>
     </div>
 </body>
 </html>
