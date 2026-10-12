@@ -4,12 +4,30 @@ import com.example.demo.model.Asistencia;
 import com.example.demo.model.Alumno;
 import com.example.demo.repository.AsistenciaRepository;
 import com.example.demo.repository.AlumnoRepository;
+
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +42,9 @@ public class AsistenciaController {
     @Autowired
     private AlumnoRepository alumnoRepository;
 
+    // ============================================================
     // 📋 MOSTRAR LISTA DE ASISTENCIAS CON FILTRO POR FECHA
+    // ============================================================
     @GetMapping("/asistencias")
     public String asistencias(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
@@ -63,7 +83,9 @@ public class AsistenciaController {
         return "asistencias";
     }
 
+    // ============================================================
     // 💾 GUARDAR ASISTENCIAS MASIVAS
+    // ============================================================
     @PostMapping("/guardarAsistencia")
     public String guardarAsistencias(
             @RequestParam String fecha,
@@ -104,7 +126,9 @@ public class AsistenciaController {
         return "redirect:/asistencias?fecha=" + fecha;
     }
 
-    // 📊 OBTENER ESTADÍSTICAS
+    // ============================================================
+    // 📊 OBTENER ESTADÍSTICAS (JSON)
+    // ============================================================
     @GetMapping("/asistencias/estadisticas")
     @ResponseBody
     public Map<String, Object> getEstadisticas(@RequestParam String fecha) {
@@ -124,7 +148,9 @@ public class AsistenciaController {
         return stats;
     }
 
+    // ============================================================
     // 📋 VER ASISTENCIA DE UN ALUMNO ESPECÍFICO
+    // ============================================================
     @GetMapping("/asistencias/alumno/{id}")
     public String verAsistenciaAlumno(@PathVariable Integer id, Model model) {
         Alumno alumno = alumnoRepository.findById(id)
@@ -148,10 +174,8 @@ public class AsistenciaController {
     }
 
     // ============================================================
-    // 📄 REPORTES
+    // 📄 PÁGINA DE REPORTES
     // ============================================================
-
-    // 📄 Página de reportes
     @GetMapping("/reportes")
     public String verReportes(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
@@ -180,12 +204,14 @@ public class AsistenciaController {
         return "reportes";
     }
 
-    // 📄 Exportar reporte a PDF
+    // ============================================================
+    // 📄 EXPORTAR REPORTE A PDF (iText 7)
+    // ============================================================
     @GetMapping("/reportes/pdf")
     public void exportarPdf(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
-            jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+            HttpServletResponse response) throws IOException {
 
         List<Asistencia> asistencias = asistenciaRepository.findByFechaBetween(inicio, fin);
         List<Alumno> alumnos = alumnoRepository.findAll();
@@ -195,110 +221,113 @@ public class AsistenciaController {
             nombreAlumno.put(a.getIdAlumno(), a.getNombre() + " " + a.getApellido());
         }
 
+        // ---- Configurar respuesta HTTP ----
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition",
                 "attachment; filename=reporte_asistencias_" + inicio + "_a_" + fin + ".pdf");
 
-        com.lowagie.text.Document document = new com.lowagie.text.Document(
-                com.lowagie.text.PageSize.A4, 40, 40, 50, 40);
+        // ---- Crear documento iText 7 ----
+        PdfWriter writer = new PdfWriter(response.getOutputStream());
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+        document.setMargins(40, 40, 40, 40);
 
-        try {
-            com.lowagie.text.pdf.PdfWriter.getInstance(document, response.getOutputStream());
-            document.open();
+        // Fuentes
+        PdfFont bold = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+        PdfFont normal = PdfFontFactory.createFont(StandardFonts.HELVETICA);
 
-            // ---- Título ----
-            com.lowagie.text.Font titulo = new com.lowagie.text.Font(
-                    com.lowagie.text.Font.HELVETICA, 18,
-                    com.lowagie.text.Font.BOLD,
-                    new java.awt.Color(102, 126, 234));
-            com.lowagie.text.Paragraph t = new com.lowagie.text.Paragraph(
-                    "Reporte de Asistencias", titulo);
-            t.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
-            document.add(t);
+        // ---- Título ----
+        Paragraph titulo = new Paragraph("Reporte de Asistencias")
+                .setFont(bold)
+                .setFontSize(20)
+                .setFontColor(new DeviceRgb(102, 126, 234))
+                .setTextAlignment(TextAlignment.CENTER);
+        document.add(titulo);
 
-            // ---- Subtítulo rango ----
-            com.lowagie.text.Font sub = new com.lowagie.text.Font(
-                    com.lowagie.text.Font.HELVETICA, 11,
-                    com.lowagie.text.Font.NORMAL,
-                    new java.awt.Color(74, 74, 106));
-            com.lowagie.text.Paragraph s = new com.lowagie.text.Paragraph(
-                    "Periodo: " + inicio + "  al  " + fin, sub);
-            s.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
-            document.add(s);
-            document.add(new com.lowagie.text.Paragraph(" "));
+        // ---- Subtítulo rango ----
+        Paragraph subtitulo = new Paragraph("Periodo: " + inicio + "  al  " + fin)
+                .setFont(normal)
+                .setFontSize(11)
+                .setFontColor(new DeviceRgb(74, 74, 106))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(15);
+        document.add(subtitulo);
 
-            // ---- Resumen ----
-            long presentes = asistencias.stream().filter(a -> "Presente".equals(a.getEstado())).count();
-            long ausentes  = asistencias.stream().filter(a -> "Ausente".equals(a.getEstado())).count();
-            long total     = asistencias.size();
-            double porcentaje = total > 0 ? (presentes * 100.0 / total) : 0;
+        // ---- Resumen ----
+        long presentes = asistencias.stream().filter(a -> "Presente".equals(a.getEstado())).count();
+        long ausentes  = asistencias.stream().filter(a -> "Ausente".equals(a.getEstado())).count();
+        long total     = asistencias.size();
+        double porcentaje = total > 0 ? (presentes * 100.0 / total) : 0;
 
-            com.lowagie.text.Font negrita = new com.lowagie.text.Font(
-                    com.lowagie.text.Font.HELVETICA, 11, com.lowagie.text.Font.BOLD);
-            document.add(new com.lowagie.text.Paragraph("Resumen general:", negrita));
-            document.add(new com.lowagie.text.Paragraph("• Total de registros: " + total));
-            document.add(new com.lowagie.text.Paragraph("• Presentes: " + presentes));
-            document.add(new com.lowagie.text.Paragraph("• Ausentes: " + ausentes));
-            document.add(new com.lowagie.text.Paragraph(
-                    "• Porcentaje de asistencia: " + (Math.round(porcentaje * 100) / 100.0) + " %"));
-            document.add(new com.lowagie.text.Paragraph(" "));
+        document.add(new Paragraph("Resumen general:").setFont(bold).setFontSize(12));
+        document.add(new Paragraph("• Total de registros: " + total).setFont(normal).setFontSize(10));
+        document.add(new Paragraph("• Presentes: " + presentes).setFont(normal).setFontSize(10));
+        document.add(new Paragraph("• Ausentes: " + ausentes).setFont(normal).setFontSize(10));
+        document.add(new Paragraph("• Porcentaje de asistencia: "
+                + (Math.round(porcentaje * 100) / 100.0) + " %")
+                .setFont(normal).setFontSize(10)
+                .setMarginBottom(15));
 
-            // ---- Tabla de detalle ----
-            com.lowagie.text.pdf.PdfPTable tabla = new com.lowagie.text.pdf.PdfPTable(4);
-            tabla.setWidthPercentage(100);
-            tabla.setWidths(new float[]{2f, 3f, 2f, 4f});
+        // ---- Tabla de detalle ----
+        float[] columnWidths = {2f, 3f, 2f, 4f};
+        Table tabla = new Table(UnitValue.createPercentArray(columnWidths));
+        tabla.setWidth(UnitValue.createPercentValue(100));
 
-            String[] headers = {"Fecha", "Alumno", "Estado", "Bitácora"};
-            com.lowagie.text.Font headFont = new com.lowagie.text.Font(
-                    com.lowagie.text.Font.HELVETICA, 10,
-                    com.lowagie.text.Font.BOLD, java.awt.Color.WHITE);
-
-            for (String h : headers) {
-                com.lowagie.text.pdf.PdfPCell cell = new com.lowagie.text.pdf.PdfPCell(
-                        new com.lowagie.text.Phrase(h, headFont));
-                cell.setBackgroundColor(new java.awt.Color(102, 126, 234));
-                cell.setPadding(6);
-                cell.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_CENTER);
-                tabla.addCell(cell);
-            }
-
-            com.lowagie.text.Font bodyFont = new com.lowagie.text.Font(
-                    com.lowagie.text.Font.HELVETICA, 9);
-
-            for (Asistencia a : asistencias) {
-                String nombre = nombreAlumno.getOrDefault(a.getIdAlumno(), "ID " + a.getIdAlumno());
-                String bitacora = a.getBitacora() == null ? "" : a.getBitacora();
-
-                com.lowagie.text.pdf.PdfPCell c1 = new com.lowagie.text.pdf.PdfPCell(
-                        new com.lowagie.text.Phrase(a.getFecha().toString(), bodyFont));
-                com.lowagie.text.pdf.PdfPCell c2 = new com.lowagie.text.pdf.PdfPCell(
-                        new com.lowagie.text.Phrase(nombre, bodyFont));
-                com.lowagie.text.pdf.PdfPCell c3 = new com.lowagie.text.pdf.PdfPCell(
-                        new com.lowagie.text.Phrase(a.getEstado(), bodyFont));
-                com.lowagie.text.pdf.PdfPCell c4 = new com.lowagie.text.pdf.PdfPCell(
-                        new com.lowagie.text.Phrase(bitacora, bodyFont));
-
-                if ("Presente".equals(a.getEstado())) {
-                    c3.setBackgroundColor(new java.awt.Color(212, 237, 218));
-                } else {
-                    c3.setBackgroundColor(new java.awt.Color(248, 215, 218));
-                }
-
-                for (com.lowagie.text.pdf.PdfPCell c : new com.lowagie.text.pdf.PdfPCell[]{c1, c2, c3, c4}) {
-                    c.setPadding(5);
-                }
-
-                tabla.addCell(c1);
-                tabla.addCell(c2);
-                tabla.addCell(c3);
-                tabla.addCell(c4);
-            }
-
-            document.add(tabla);
-            document.close();
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error generando PDF: " + e.getMessage(), e);
+        // Cabeceras
+        String[] headers = {"Fecha", "Alumno", "Estado", "Bitácora"};
+        DeviceRgb headerBg = new DeviceRgb(102, 126, 234);
+        for (String h : headers) {
+            Cell cell = new Cell()
+                    .add(new Paragraph(h).setFont(bold).setFontSize(10)
+                            .setFontColor(ColorConstants.WHITE))
+                    .setBackgroundColor(headerBg)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setPadding(6);
+            tabla.addHeaderCell(cell);
         }
+
+        // Filas
+        DeviceRgb verde = new DeviceRgb(212, 237, 218);
+        DeviceRgb rojo  = new DeviceRgb(248, 215, 218);
+
+        for (Asistencia a : asistencias) {
+            String nombre = nombreAlumno.getOrDefault(a.getIdAlumno(), "ID " + a.getIdAlumno());
+            String bitacora = a.getBitacora() == null ? "" : a.getBitacora();
+
+            Cell c1 = new Cell().add(new Paragraph(a.getFecha().toString())
+                    .setFont(normal).setFontSize(9)).setPadding(5);
+
+            Cell c2 = new Cell().add(new Paragraph(nombre)
+                    .setFont(normal).setFontSize(9)).setPadding(5);
+
+            Cell c3 = new Cell().add(new Paragraph(a.getEstado())
+                    .setFont(normal).setFontSize(9)).setPadding(5);
+
+            if ("Presente".equals(a.getEstado())) {
+                c3.setBackgroundColor(verde);
+            } else {
+                c3.setBackgroundColor(rojo);
+            }
+
+            Cell c4 = new Cell().add(new Paragraph(bitacora)
+                    .setFont(normal).setFontSize(9)).setPadding(5);
+
+            tabla.addCell(c1);
+            tabla.addCell(c2);
+            tabla.addCell(c3);
+            tabla.addCell(c4);
+        }
+
+        document.add(tabla);
+
+        // ---- Pie de página ----
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph("Generado automáticamente por el Sistema Escolar")
+                .setFont(normal)
+                .setFontSize(8)
+                .setFontColor(new DeviceRgb(138, 138, 170))
+                .setTextAlignment(TextAlignment.CENTER));
+
+        document.close();
     }
 }
