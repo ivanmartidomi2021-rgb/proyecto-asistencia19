@@ -59,7 +59,7 @@ public interface AsistenciaRepository extends JpaRepository<Asistencia, Integer>
     List<Object[]> findTopAusentes(@Param("fechaInicio") LocalDate fechaInicio,
                                    @Param("fechaFin") LocalDate fechaFin);
 
-    // ✅ NUEVOS (para reportes por rango)
+    // ✅ Para reportes por rango
     List<Asistencia> findByIdAlumnoAndFechaBetween(
             Integer idAlumno, LocalDate inicio, LocalDate fin);
 
