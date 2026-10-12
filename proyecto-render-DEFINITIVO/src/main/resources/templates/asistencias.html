@@ -84,10 +84,7 @@
         .main-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
+            top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end), var(--gradient-start));
             background-size: 200% 100%;
             animation: gradientSlide 3s linear infinite;
@@ -98,7 +95,6 @@
             100% { background-position: 200% 0%; }
         }
 
-        /* ===== HEADER ===== */
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -129,13 +125,8 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .header-actions {
-            display: flex;
-            gap: .75rem;
-            flex-wrap: wrap;
-        }
+        .header-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
 
-        /* ===== BOTONES ===== */
         .btn {
             padding: .7rem 1.4rem;
             border-radius: 10px;
@@ -155,7 +146,6 @@
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
             color: white;
         }
-
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(102,126,234,0.4);
@@ -166,7 +156,6 @@
             background: linear-gradient(135deg, #f56565, #c53030);
             color: white;
         }
-
         .btn-danger:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(245,101,101,0.4);
@@ -177,21 +166,15 @@
             background: linear-gradient(135deg, #38a169, #2f855a);
             color: white;
         }
-
         .btn-success:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(56,161,105,0.4);
             color: white;
         }
 
-        .btn-secondary {
-            background: #e2e8f0;
-            color: var(--text-dark);
-        }
-
+        .btn-secondary { background: #e2e8f0; color: var(--text-dark); }
         .btn-secondary:hover { background: #cbd5e0; color: var(--text-dark); }
 
-        /* ===== FILTRO FECHA ===== */
         .filtro-fecha {
             display: flex;
             gap: 1rem;
@@ -225,7 +208,6 @@
             background: white;
         }
 
-        /* ===== STATS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -241,11 +223,7 @@
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
         }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 
         .stat-card .label {
             font-size: .75rem;
@@ -263,20 +241,17 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         .stat-card.success .value {
             background: linear-gradient(135deg, #38a169, #2f855a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         .stat-card.danger .value {
             background: linear-gradient(135deg, #e53e3e, #c53030);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* ===== TABLA ===== */
         .tabla-wrapper {
             overflow-x: auto;
             border-radius: var(--r-md);
@@ -284,17 +259,12 @@
             background: white;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: .95rem;
-        }
+        table { width: 100%; border-collapse: collapse; font-size: .95rem; }
 
         thead {
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
             color: white;
         }
-
         thead th {
             padding: .9rem 1rem;
             text-align: left;
@@ -305,23 +275,13 @@
             white-space: nowrap;
         }
 
-        tbody tr {
-            border-bottom: 1px solid var(--border-light);
-            transition: var(--transition);
-        }
-
+        tbody tr { border-bottom: 1px solid var(--border-light); transition: var(--transition); }
         tbody tr:hover { background: rgba(102,126,234,0.04); }
         tbody tr:last-child { border-bottom: none; }
 
-        tbody td {
-            padding: .85rem 1rem;
-            vertical-align: middle;
-        }
+        tbody td { padding: .85rem 1rem; vertical-align: middle; }
 
-        .alumno-nombre {
-            font-weight: 600;
-            color: var(--text-dark);
-        }
+        .alumno-nombre { font-weight: 600; color: var(--text-dark); }
 
         .checkbox-cell { text-align: center; }
 
@@ -341,21 +301,9 @@
             font-size: .8rem;
             font-weight: 600;
         }
-
-        .badge-presente {
-            background: rgba(56,161,105,0.12);
-            color: #2f855a;
-        }
-
-        .badge-ausente {
-            background: rgba(229,62,62,0.12);
-            color: #c53030;
-        }
-
-        .badge-sin-registro {
-            background: rgba(138,138,170,0.12);
-            color: var(--text-light);
-        }
+        .badge-presente { background: rgba(56,161,105,0.12); color: #2f855a; }
+        .badge-ausente  { background: rgba(229,62,62,0.12);  color: #c53030; }
+        .badge-sin-registro { background: rgba(138,138,170,0.12); color: var(--text-light); }
 
         .input-bitacora {
             width: 100%;
@@ -366,7 +314,6 @@
             font-size: .9rem;
             transition: var(--transition);
         }
-
         .input-bitacora:focus {
             outline: none;
             border-color: var(--gradient-start);
@@ -378,13 +325,7 @@
             padding: 3rem 1rem;
             color: var(--text-light);
         }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
-            opacity: 0.5;
-        }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5; }
 
         .acciones-footer {
             display: flex;
@@ -396,7 +337,6 @@
             border-top: 1px solid var(--border-light);
         }
 
-        /* ===== TOAST ===== */
         .toast-msg {
             position: fixed;
             bottom: 2rem;
@@ -414,9 +354,7 @@
             align-items: center;
             gap: .6rem;
         }
-
         .toast-msg.show { transform: translateY(0); }
-
         .toast-msg i { color: #38a169; font-size: 1.3rem; }
     </style>
 </head>
@@ -445,8 +383,7 @@
         <form method="get" th:action="@{/asistencias}" class="filtro-fecha">
             <div class="form-group">
                 <label>Seleccionar fecha</label>
-                <input type="date" name="fecha"
-                       th:value="${fechaSeleccionada}" required>
+                <input type="date" name="fecha" th:value="${fechaSeleccionada}" required>
             </div>
             <button type="submit" class="btn btn-primary">
                 <i class="bi bi-search"></i> Consultar
@@ -495,11 +432,12 @@
                             No hay alumnos registrados
                         </td>
                     </tr>
+                    <!-- ✅ CORREGIDO: alumno.nombres + alumno.apellidos -->
                     <tr th:each="alumno, iter : ${alumnos}">
                         <td th:text="${iter.index + 1}">1</td>
                         <td>
                             <div class="alumno-nombre"
-                                 th:text="${alumno.nombre + ' ' + alumno.apellido}">
+                                 th:text="${alumno.nombres + ' ' + alumno.apellidos}">
                                 Nombre
                             </div>
                         </td>
@@ -537,11 +475,6 @@
             </div>
 
             <div class="acciones-footer">
-                <a th:href="@{/asistencias/alumno/{id}(id=${alumnos.size() > 0 ? alumnos[0].idAlumno : 1})}"
-                   class="btn btn-secondary"
-                   th:if="${!#lists.isEmpty(alumnos)}">
-                    <i class="bi bi-person-lines-fill"></i> Ver historial
-                </a>
                 <button type="submit" class="btn btn-success">
                     <i class="bi bi-save-fill"></i> Guardar Asistencias
                 </button>
@@ -551,27 +484,8 @@
     </div>
 </div>
 
-<!-- ===== TOAST DE CONFIRMACIÓN ===== -->
-<div class="toast-msg" id="toast">
-    <i class="bi bi-check-circle-fill"></i>
-    <span id="toast-text">Asistencias guardadas correctamente</span>
-</div>
-
-<script th:inline="javascript">
-    // Mostrar toast si venimos de guardar
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('fecha') && document.referrer.includes('guardarAsistencia')) {
-        showToast('Asistencias guardadas correctamente');
-    }
-
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        document.getElementById('toast-text').textContent = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    // Contador en vivo
+<script>
+    // Contador en vivo al marcar/desmarcar
     document.querySelectorAll('.check-presente').forEach(chk => {
         chk.addEventListener('change', () => {
             const total = document.querySelectorAll('.check-presente').length;
