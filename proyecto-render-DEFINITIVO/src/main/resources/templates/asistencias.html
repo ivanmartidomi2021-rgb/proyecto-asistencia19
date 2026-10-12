@@ -95,3 +95,493 @@
 
         @keyframes gradientSlide {
             0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .page-title i {
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-title h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+
+        /* ===== BOTONES ===== */
+        .btn {
+            padding: .7rem 1.4rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            transition: var(--transition);
+            font-size: .95rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565, #c53030);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245,101,101,0.4);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(56,161,105,0.4);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover { background: #cbd5e0; color: var(--text-dark); }
+
+        /* ===== FILTRO FECHA ===== */
+        .filtro-fecha {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, rgba(102,126,234,0.06), rgba(118,75,162,0.06));
+            border-radius: var(--r-md);
+            margin-bottom: 1.5rem;
+        }
+
+        .filtro-fecha .form-group { flex: 1; min-width: 200px; }
+
+        .filtro-fecha label {
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--text-mid);
+            margin-bottom: .35rem;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .filtro-fecha input[type=date] {
+            width: 100%;
+            padding: .65rem .9rem;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: .95rem;
+            background: white;
+        }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            padding: 1.25rem;
+            border-radius: var(--r-md);
+            background: white;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card .label {
+            font-size: .75rem;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: .4rem;
+            font-weight: 600;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card.success .value {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card.danger .value {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ===== TABLA ===== */
+        .tabla-wrapper {
+            overflow-x: auto;
+            border-radius: var(--r-md);
+            border: 1px solid var(--border-light);
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .95rem;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+        }
+
+        thead th {
+            padding: .9rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: .85rem;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border-light);
+            transition: var(--transition);
+        }
+
+        tbody tr:hover { background: rgba(102,126,234,0.04); }
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody td {
+            padding: .85rem 1rem;
+            vertical-align: middle;
+        }
+
+        .alumno-nombre {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .checkbox-cell { text-align: center; }
+
+        .check-presente {
+            width: 20px;
+            height: 20px;
+            accent-color: #38a169;
+            cursor: pointer;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .35rem .8rem;
+            border-radius: 20px;
+            font-size: .8rem;
+            font-weight: 600;
+        }
+
+        .badge-presente {
+            background: rgba(56,161,105,0.12);
+            color: #2f855a;
+        }
+
+        .badge-ausente {
+            background: rgba(229,62,62,0.12);
+            color: #c53030;
+        }
+
+        .badge-sin-registro {
+            background: rgba(138,138,170,0.12);
+            color: var(--text-light);
+        }
+
+        .input-bitacora {
+            width: 100%;
+            padding: .5rem .7rem;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: .9rem;
+            transition: var(--transition);
+        }
+
+        .input-bitacora:focus {
+            outline: none;
+            border-color: var(--gradient-start);
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            opacity: 0.5;
+        }
+
+        .acciones-footer {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* ===== TOAST ===== */
+        .toast-msg {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            background: white;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid #38a169;
+            font-weight: 600;
+            transform: translateY(120%);
+            transition: transform .4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+        .toast-msg.show { transform: translateY(0); }
+
+        .toast-msg i { color: #38a169; font-size: 1.3rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="main-card">
+
+        <!-- ===== HEADER ===== -->
+        <div class="page-header">
+            <div class="page-title">
+                <i class="bi bi-calendar2-check-fill"></i>
+                <h1>Control de Asistencias</h1>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/reportes}" class="btn btn-primary">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Reportes
+                </a>
+                <a th:href="@{/asistencias}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-clockwise"></i> Hoy
+                </a>
+            </div>
+        </div>
+
+        <!-- ===== FILTRO POR FECHA ===== -->
+        <form method="get" th:action="@{/asistencias}" class="filtro-fecha">
+            <div class="form-group">
+                <label>Seleccionar fecha</label>
+                <input type="date" name="fecha"
+                       th:value="${fechaSeleccionada}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Consultar
+            </button>
+        </form>
+
+        <!-- ===== STATS ===== -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Total alumnos</div>
+                <div class="value" th:text="${totalAlumnos}">0</div>
+            </div>
+            <div class="stat-card success">
+                <div class="label">Presentes</div>
+                <div class="value" th:text="${presentes}">0</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="label">Ausentes</div>
+                <div class="value" th:text="${ausentes}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Fecha</div>
+                <div class="value" style="font-size:1.4rem;" th:text="${fechaSeleccionada}">--</div>
+            </div>
+        </div>
+
+        <!-- ===== FORMULARIO DE ASISTENCIAS ===== -->
+        <form method="post" th:action="@{/guardarAsistencia}">
+            <input type="hidden" name="fecha" th:value="${fechaSeleccionada}">
+
+            <div class="tabla-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th style="width:60px;">#</th>
+                        <th>Alumno</th>
+                        <th style="width:120px; text-align:center;">Presente</th>
+                        <th style="width:160px;">Estado</th>
+                        <th style="width:320px;">Bitácora</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(alumnos)}">
+                        <td colspan="5" class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            No hay alumnos registrados
+                        </td>
+                    </tr>
+                    <tr th:each="alumno, iter : ${alumnos}">
+                        <td th:text="${iter.index + 1}">1</td>
+                        <td>
+                            <div class="alumno-nombre"
+                                 th:text="${alumno.nombre + ' ' + alumno.apellido}">
+                                Nombre
+                            </div>
+                        </td>
+                        <td class="checkbox-cell">
+                            <input type="checkbox"
+                                   class="check-presente"
+                                   name="alumnosPresentes"
+                                   th:value="${alumno.idAlumno}"
+                                   th:checked="${asistenciaMap[alumno.idAlumno] == 'Presente'}">
+                        </td>
+                        <td>
+                            <span th:if="${asistenciaMap[alumno.idAlumno] == 'Presente'}"
+                                  class="badge badge-presente">
+                                <i class="bi bi-check-circle-fill"></i> Presente
+                            </span>
+                            <span th:if="${asistenciaMap[alumno.idAlumno] == 'Ausente'}"
+                                  class="badge badge-ausente">
+                                <i class="bi bi-x-circle-fill"></i> Ausente
+                            </span>
+                            <span th:if="${asistenciaMap[alumno.idAlumno] == null}"
+                                  class="badge badge-sin-registro">
+                                <i class="bi bi-dash-circle"></i> Sin registro
+                            </span>
+                        </td>
+                        <td>
+                            <input type="text"
+                                   class="input-bitacora"
+                                   th:name="'bitacora_' + ${alumno.idAlumno}"
+                                   th:value="${bitacoraMap[alumno.idAlumno]}"
+                                   placeholder="Observaciones...">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="acciones-footer">
+                <a th:href="@{/asistencias/alumno/{id}(id=${alumnos.size() > 0 ? alumnos[0].idAlumno : 1})}"
+                   class="btn btn-secondary"
+                   th:if="${!#lists.isEmpty(alumnos)}">
+                    <i class="bi bi-person-lines-fill"></i> Ver historial
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save-fill"></i> Guardar Asistencias
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- ===== TOAST DE CONFIRMACIÓN ===== -->
+<div class="toast-msg" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toast-text">Asistencias guardadas correctamente</span>
+</div>
+
+<script th:inline="javascript">
+    // Mostrar toast si venimos de guardar
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('fecha') && document.referrer.includes('guardarAsistencia')) {
+        showToast('Asistencias guardadas correctamente');
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        document.getElementById('toast-text').textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // Contador en vivo
+    document.querySelectorAll('.check-presente').forEach(chk => {
+        chk.addEventListener('change', () => {
+            const total = document.querySelectorAll('.check-presente').length;
+            const presentes = document.querySelectorAll('.check-presente:checked').length;
+            const ausentes = total - presentes;
+            document.querySelector('.stat-card.success .value').textContent = presentes;
+            document.querySelector('.stat-card.danger .value').textContent = ausentes;
+        });
+    });
+</script>
+
+</body>
+</html>
