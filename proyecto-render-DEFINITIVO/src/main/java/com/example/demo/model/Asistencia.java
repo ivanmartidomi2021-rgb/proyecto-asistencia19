@@ -20,50 +20,23 @@ public class Asistencia {
     @Column(name = "estado")
     private String estado; // "Presente" o "Ausente"
 
-    @Column(name = "bitacora")
+    @Column(name = "bitacora", length = 1000)
     private String bitacora;
 
-    // Constructor vacío
     public Asistencia() {}
 
-    // Getters y Setters
-    public Integer getId() {
-        return id;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public Integer getIdAlumno() { return idAlumno; }
+    public void setIdAlumno(Integer idAlumno) { this.idAlumno = idAlumno; }
 
-    public Integer getIdAlumno() {
-        return idAlumno;
-    }
+    public LocalDate getFecha() { return fecha; }
+    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
 
-    public void setIdAlumno(Integer idAlumno) {
-        this.idAlumno = idAlumno;
-    }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getBitacora() {
-        return bitacora;
-    }
-
-    public void setBitacora(String bitacora) {
-        this.bitacora = bitacora;
-    }
+    public String getBitacora() { return bitacora; }
+    public void setBitacora(String bitacora) { this.bitacora = bitacora; }  // ✅ CORREGIDO
 }
