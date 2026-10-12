@@ -216,9 +216,12 @@ public class AsistenciaController {
         List<Asistencia> asistencias = asistenciaRepository.findByFechaBetween(inicio, fin);
         List<Alumno> alumnos = alumnoRepository.findAll();
 
+        // ✅ CORREGIDO: getNombres() y getApellidos() (en plural, según tu clase Alumno)
         Map<Integer, String> nombreAlumno = new HashMap<>();
         for (Alumno a : alumnos) {
-            nombreAlumno.put(a.getIdAlumno(), a.getNombre() + " " + a.getApellido());
+            String nombre = (a.getNombres() != null ? a.getNombres() : "") + " " +
+                            (a.getApellidos() != null ? a.getApellidos() : "");
+            nombreAlumno.put(a.getIdAlumno(), nombre.trim());
         }
 
         // ---- Configurar respuesta HTTP ----
