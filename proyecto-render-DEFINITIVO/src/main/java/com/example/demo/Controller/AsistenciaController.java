@@ -146,4 +146,159 @@ public class AsistenciaController {
 
         return "asistencia-alumno";
     }
+
+    // ============================================================
+    // 📄 REPORTES
+    // ============================================================
+
+    // 📄 Página de reportes
+    @GetMapping("/reportes")
+    public String verReportes(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
+            Model model) {
+
+        if (inicio == null) inicio = LocalDate.now().withDayOfMonth(1);
+        if (fin == null) fin = LocalDate.now();
+
+        List<Asistencia> asistencias = asistenciaRepository.findByFechaBetween(inicio, fin);
+        List<Alumno> alumnos = alumnoRepository.findAll();
+
+        long presentes = asistencias.stream().filter(a -> "Presente".equals(a.getEstado())).count();
+        long ausentes  = asistencias.stream().filter(a -> "Ausente".equals(a.getEstado())).count();
+        long total     = asistencias.size();
+        double porcentaje = total > 0 ? (presentes * 100.0 / total) : 0;
+
+        model.addAttribute("inicio", inicio);
+        model.addAttribute("fin", fin);
+        model.addAttribute("totalAlumnos", alumnos.size());
+        model.addAttribute("totalRegistros", total);
+        model.addAttribute("presentes", presentes);
+        model.addAttribute("ausentes", ausentes);
+        model.addAttribute("porcentaje", Math.round(porcentaje * 100) / 100.0);
+
+        return "reportes";
+    }
+
+    // 📄 Exportar reporte a PDF
+    @GetMapping("/reportes/pdf")
+    public void exportarPdf(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
+            jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+
+        List<Asistencia> asistencias = asistenciaRepository.findByFechaBetween(inicio, fin);
+        List<Alumno> alumnos = alumnoRepository.findAll();
+
+        Map<Integer, String> nombreAlumno = new HashMap<>();
+        for (Alumno a : alumnos) {
+            nombreAlumno.put(a.getIdAlumno(), a.getNombre() + " " + a.getApellido());
+        }
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=reporte_asistencias_" + inicio + "_a_" + fin + ".pdf");
+
+        com.lowagie.text.Document document = new com.lowagie.text.Document(
+                com.lowagie.text.PageSize.A4, 40, 40, 50, 40);
+
+        try {
+            com.lowagie.text.pdf.PdfWriter.getInstance(document, response.getOutputStream());
+            document.open();
+
+            // ---- Título ----
+            com.lowagie.text.Font titulo = new com.lowagie.text.Font(
+                    com.lowagie.text.Font.HELVETICA, 18,
+                    com.lowagie.text.Font.BOLD,
+                    new java.awt.Color(102, 126, 234));
+            com.lowagie.text.Paragraph t = new com.lowagie.text.Paragraph(
+                    "Reporte de Asistencias", titulo);
+            t.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+            document.add(t);
+
+            // ---- Subtítulo rango ----
+            com.lowagie.text.Font sub = new com.lowagie.text.Font(
+                    com.lowagie.text.Font.HELVETICA, 11,
+                    com.lowagie.text.Font.NORMAL,
+                    new java.awt.Color(74, 74, 106));
+            com.lowagie.text.Paragraph s = new com.lowagie.text.Paragraph(
+                    "Periodo: " + inicio + "  al  " + fin, sub);
+            s.setAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+            document.add(s);
+            document.add(new com.lowagie.text.Paragraph(" "));
+
+            // ---- Resumen ----
+            long presentes = asistencias.stream().filter(a -> "Presente".equals(a.getEstado())).count();
+            long ausentes  = asistencias.stream().filter(a -> "Ausente".equals(a.getEstado())).count();
+            long total     = asistencias.size();
+            double porcentaje = total > 0 ? (presentes * 100.0 / total) : 0;
+
+            com.lowagie.text.Font negrita = new com.lowagie.text.Font(
+                    com.lowagie.text.Font.HELVETICA, 11, com.lowagie.text.Font.BOLD);
+            document.add(new com.lowagie.text.Paragraph("Resumen general:", negrita));
+            document.add(new com.lowagie.text.Paragraph("• Total de registros: " + total));
+            document.add(new com.lowagie.text.Paragraph("• Presentes: " + presentes));
+            document.add(new com.lowagie.text.Paragraph("• Ausentes: " + ausentes));
+            document.add(new com.lowagie.text.Paragraph(
+                    "• Porcentaje de asistencia: " + (Math.round(porcentaje * 100) / 100.0) + " %"));
+            document.add(new com.lowagie.text.Paragraph(" "));
+
+            // ---- Tabla de detalle ----
+            com.lowagie.text.pdf.PdfPTable tabla = new com.lowagie.text.pdf.PdfPTable(4);
+            tabla.setWidthPercentage(100);
+            tabla.setWidths(new float[]{2f, 3f, 2f, 4f});
+
+            String[] headers = {"Fecha", "Alumno", "Estado", "Bitácora"};
+            com.lowagie.text.Font headFont = new com.lowagie.text.Font(
+                    com.lowagie.text.Font.HELVETICA, 10,
+                    com.lowagie.text.Font.BOLD, java.awt.Color.WHITE);
+
+            for (String h : headers) {
+                com.lowagie.text.pdf.PdfPCell cell = new com.lowagie.text.pdf.PdfPCell(
+                        new com.lowagie.text.Phrase(h, headFont));
+                cell.setBackgroundColor(new java.awt.Color(102, 126, 234));
+                cell.setPadding(6);
+                cell.setHorizontalAlignment(com.lowagie.text.Element.ALIGN_CENTER);
+                tabla.addCell(cell);
+            }
+
+            com.lowagie.text.Font bodyFont = new com.lowagie.text.Font(
+                    com.lowagie.text.Font.HELVETICA, 9);
+
+            for (Asistencia a : asistencias) {
+                String nombre = nombreAlumno.getOrDefault(a.getIdAlumno(), "ID " + a.getIdAlumno());
+                String bitacora = a.getBitacora() == null ? "" : a.getBitacora();
+
+                com.lowagie.text.pdf.PdfPCell c1 = new com.lowagie.text.pdf.PdfPCell(
+                        new com.lowagie.text.Phrase(a.getFecha().toString(), bodyFont));
+                com.lowagie.text.pdf.PdfPCell c2 = new com.lowagie.text.pdf.PdfPCell(
+                        new com.lowagie.text.Phrase(nombre, bodyFont));
+                com.lowagie.text.pdf.PdfPCell c3 = new com.lowagie.text.pdf.PdfPCell(
+                        new com.lowagie.text.Phrase(a.getEstado(), bodyFont));
+                com.lowagie.text.pdf.PdfPCell c4 = new com.lowagie.text.pdf.PdfPCell(
+                        new com.lowagie.text.Phrase(bitacora, bodyFont));
+
+                if ("Presente".equals(a.getEstado())) {
+                    c3.setBackgroundColor(new java.awt.Color(212, 237, 218));
+                } else {
+                    c3.setBackgroundColor(new java.awt.Color(248, 215, 218));
+                }
+
+                for (com.lowagie.text.pdf.PdfPCell c : new com.lowagie.text.pdf.PdfPCell[]{c1, c2, c3, c4}) {
+                    c.setPadding(5);
+                }
+
+                tabla.addCell(c1);
+                tabla.addCell(c2);
+                tabla.addCell(c3);
+                tabla.addCell(c4);
+            }
+
+            document.add(tabla);
+            document.close();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generando PDF: " + e.getMessage(), e);
+        }
+    }
 }
