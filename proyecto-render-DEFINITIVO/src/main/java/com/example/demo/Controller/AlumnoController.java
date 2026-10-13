@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/alumnos")
 public class AlumnoController {
@@ -18,14 +20,43 @@ public class AlumnoController {
     @Autowired
     private EspecialidadRepository especialidadRepository;
 
-    // Listar alumnos -> muestra templates/alumnos.html
+    // Listar alumnos con búsqueda y orden
     @GetMapping
-    public String listarAlumnos(Model model) {
-        model.addAttribute("alumnos", alumnoRepository.findAll());
+    public String listarAlumnos(
+            @RequestParam(value = "buscar", required = false) String buscar,
+            @RequestParam(value = "orden", required = false, defaultValue = "id") String orden,
+            Model model) {
+
+        List<Alumno> alumnos;
+
+        // 🔍 Búsqueda por nombre o apellido
+        if (buscar != null && !buscar.trim().isEmpty()) {
+            alumnos = alumnoRepository
+                    .findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(buscar, buscar);
+        } else {
+            // 📊 Orden alfabético
+            switch (orden) {
+                case "nombre":
+                    alumnos = alumnoRepository.findAllByOrderByNombresAsc();
+                    break;
+                case "apellido":
+                    alumnos = alumnoRepository.findAllByOrderByApellidosAsc();
+                    break;
+                case "grado":
+                    alumnos = alumnoRepository.findAllByOrderByGradoAsc();
+                    break;
+                default:
+                    alumnos = alumnoRepository.findAll();
+            }
+        }
+
+        model.addAttribute("alumnos", alumnos);
         model.addAttribute("especialidades", especialidadRepository.findAll());
         model.addAttribute("totalAlumnos", alumnoRepository.count());
         model.addAttribute("alumno", new Alumno());
-        return "alumnos";   // ✅ archivo templates/alumnos.html
+        model.addAttribute("buscar", buscar);   // para mantener el valor en el input
+        model.addAttribute("orden", orden);     // para mantener el select seleccionado
+        return "alumnos";
     }
 
     // Guardar alumno (nuevo o edición)
