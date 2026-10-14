@@ -16,7 +16,7 @@ import java.util.List;
 public class DataInitializer {
 
     // ============================================================
-    // 1) Inicializar usuario admin (YA LO TENÍAS)
+    // 1) Inicializar usuario admin
     // ============================================================
     @Bean
     public CommandLineRunner initData(UsuarioRepository usuarioRepository) {
@@ -35,7 +35,7 @@ public class DataInitializer {
                 usuarioRepository.save(admin);
 
                 System.out.println(">>> ============================================");
-                System.out.println(">>> Usuario admin CREADO: admin / 123456");
+                System.out.println(">>> Usuario admin creado correctamente.");
                 System.out.println(">>> ============================================");
             } else if (admin.getPasswordHash() == null
                     || !admin.getPasswordHash().startsWith("$2")) {
@@ -44,8 +44,7 @@ public class DataInitializer {
                 usuarioRepository.save(admin);
 
                 System.out.println(">>> ============================================");
-                System.out.println(">>> Contraseña del admin ACTUALIZADA a hash BCrypt");
-                System.out.println(">>> Login: admin / 123456");
+                System.out.println(">>> Contraseña del admin actualizada a hash BCrypt.");
                 System.out.println(">>> ============================================");
             } else {
                 System.out.println(">>> Usuario admin ya existe con hash válido.");
@@ -54,7 +53,7 @@ public class DataInitializer {
     }
 
     // ============================================================
-    // 2) Inicializar materias de un instituto salvadoreño (NUEVO)
+    // 2) Inicializar materias de un instituto salvadoreño
     // ============================================================
     @Bean
     public CommandLineRunner initEspecialidades(EspecialidadRepository especialidadRepository) {
@@ -72,7 +71,7 @@ public class DataInitializer {
                 ));
 
                 System.out.println(">>> ============================================");
-                System.out.println(">>> 8 materias del instituto CARGADAS.");
+                System.out.println(">>> 8 materias del instituto cargadas.");
                 System.out.println(">>> ============================================");
             } else {
                 System.out.println(">>> Las materias ya están registradas ("
