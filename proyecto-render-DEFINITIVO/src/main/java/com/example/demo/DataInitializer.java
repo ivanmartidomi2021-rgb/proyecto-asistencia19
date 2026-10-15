@@ -7,7 +7,6 @@ import com.example.demo.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,19 +15,24 @@ import java.util.List;
 public class DataInitializer {
 
     // ============================================================
+    // Hash BCrypt pre-generado para la contraseña: 123456
+    // (No se puede revertir a texto plano a simple vista)
+    // ============================================================
+    private static final String ADMIN_PASSWORD_HASH =
+            "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
+
+    // ============================================================
     // 1) Inicializar usuario admin
     // ============================================================
     @Bean
     public CommandLineRunner initData(UsuarioRepository usuarioRepository) {
         return args -> {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
             Usuario admin = usuarioRepository.findByUsername("admin");
 
             if (admin == null) {
                 admin = new Usuario();
                 admin.setUsername("admin");
-                admin.setPasswordHash(encoder.encode("123456"));
+                admin.setPasswordHash(ADMIN_PASSWORD_HASH);
                 admin.setNombre("Administrador");
                 admin.setActivo(true);
                 admin.setCreadoEn(LocalDateTime.now());
@@ -39,7 +43,7 @@ public class DataInitializer {
                 System.out.println(">>> ============================================");
             } else if (admin.getPasswordHash() == null
                     || !admin.getPasswordHash().startsWith("$2")) {
-                admin.setPasswordHash(encoder.encode("123456"));
+                admin.setPasswordHash(ADMIN_PASSWORD_HASH);
                 admin.setActivo(true);
                 usuarioRepository.save(admin);
 
