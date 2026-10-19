@@ -152,12 +152,8 @@
                     </tr>
                     <tr th:each="a : ${asistencias}">
                         <td th:text="${a.fecha}">2026-10-10</td>
-                        <td>
-                            <!-- Buscamos el nombre del alumno en la lista -->
-                            <span th:each="alumno : ${listaAlumnos}" 
-                                  th:if="${alumno.idAlumno == a.idAlumno}"
-                                  th:text="${alumno.nombres + ' ' + alumno.apellidos}">Nombre</span>
-                        </td>
+                        <!-- Usamos el mapa que enviamos desde el controlador para el nombre -->
+                        <td th:text="${mapaAlumnos[a.idAlumno]}">Nombre del alumno</td>
                         <td>
                             <span th:if="${a.estado == 'Presente'}" style="color: #2f855a; font-weight: 600;">Presente</span>
                             <span th:if="${a.estado == 'Ausente'}" style="color: #c53030; font-weight: 600;">Ausente</span>
