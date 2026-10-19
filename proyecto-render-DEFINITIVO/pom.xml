@@ -56,7 +56,7 @@
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
-        <!-- 📄 iText 7 -->
+        <!-- 📄 iText 7 (Para los reportes PDF) -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
@@ -64,7 +64,7 @@
             <type>pom</type>
         </dependency>
 
-        <!-- 📊 Apache POI -->
+        <!-- 📊 Apache POI (Para los reportes Excel) -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
