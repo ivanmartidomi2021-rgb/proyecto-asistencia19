@@ -2,8 +2,12 @@ package com.example.demo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -12,20 +16,25 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // 1. Inyecta tu UserDetailsServiceImpl (asegúrate de que el nombre de la clase coincida)
+    private final UserDetailsServiceImpl userDetailsService;
+
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                // Permitir acceso público al login y recursos estáticos (CSS, JS, Imágenes)
                 .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/error").permitAll()
-                // Cualquier otra ruta requiere estar logueado
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login")                 // Tu página de login
-                .loginProcessingUrl("/login")        // URL que procesa el login (POST)
-                .defaultSuccessUrl("/dashboard", true) // Ir aquí si el login es exitoso
-                .failureUrl("/login?error=true")     // Ir aquí si falla
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/dashboard", true)
+                .failureUrl("/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
@@ -37,6 +46,15 @@ public class SecurityConfig {
             );
 
         return http.build();
+    }
+
+    // 2. ESTO ES LO QUE FALTA: Registrar el AuthenticationManager con tu UserDetailsService
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(provider);
     }
 
     @Bean
