@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,7 +45,7 @@ public class ReporteController {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // ==================== VISTA PREVIA DEL REPORTE ====================
+    // 1. VISTA PRINCIPAL DE REPORTES
     @GetMapping("/reportes")
     public String verReportes(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
@@ -53,50 +54,65 @@ public class ReporteController {
             @RequestParam(required = false) String estado,
             Model model) {
 
-        // Fechas por defecto (mes actual)
         if (inicio == null) inicio = LocalDate.now().withDayOfMonth(1);
         if (fin == null) fin = LocalDate.now();
 
-        // Obtener datos y filtrar
-        List<Asistencia> asistenciasRango = asistenciaRepository.findByFechaBetween(inicio, fin);
-        List<Alumno> listaAlumnos = alumnoRepository.findAll();
+        model.addAttribute("inicio", inicio);
+        model.addAttribute("fin", fin);
+        model.addAttribute("idAlumnoSeleccionado", idAlumno);
+        model.addAttribute("estadoSeleccionado", estado);
+        model.addAttribute("listaAlumnos", alumnoRepository.findAll());
 
-        List<Asistencia> filtradas = asistenciasRango.stream()
+        return "reportes";
+    }
+
+    // 2. API JSON PARA ACTUALIZACIÓN DINÁMICA (AJAX)
+    @GetMapping("/reportes/datos")
+    @ResponseBody
+    public Map<String, Object> obtenerDatosReporte(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
+            @RequestParam(required = false) Integer idAlumno,
+            @RequestParam(required = false) String estado) {
+
+        List<Asistencia> todas = asistenciaRepository.findByFechaBetween(inicio, fin);
+        List<Alumno> alumnos = alumnoRepository.findAll();
+
+        Map<Integer, String> mapaAlumnos = new HashMap<>();
+        for (Alumno a : alumnos) {
+            mapaAlumnos.put(a.getIdAlumno(), a.getNombres() + " " + a.getApellidos());
+        }
+
+        List<Asistencia> filtradas = todas.stream()
                 .filter(a -> idAlumno == null || a.getIdAlumno().equals(idAlumno))
                 .filter(a -> estado == null || estado.trim().isEmpty() || a.getEstado().equalsIgnoreCase(estado))
                 .collect(Collectors.toList());
 
-        // Mapa de alumnos (ID -> Nombre completo)
-        Map<Integer, String> mapaAlumnos = new HashMap<>();
-        for (Alumno a : listaAlumnos) {
-            mapaAlumnos.put(a.getIdAlumno(), a.getNombres() + " " + a.getApellidos());
-        }
-
-        // Estadísticas
         long presentes = filtradas.stream().filter(a -> "Presente".equals(a.getEstado())).count();
         long ausentes = filtradas.stream().filter(a -> "Ausente".equals(a.getEstado())).count();
         long total = filtradas.size();
         double porcentaje = total > 0 ? (presentes * 100.0 / total) : 0;
 
-        // Enviar a la vista (HTML)
-        model.addAttribute("inicio", inicio);
-        model.addAttribute("fin", fin);
-        model.addAttribute("idAlumnoSeleccionado", idAlumno);
-        model.addAttribute("estadoSeleccionado", estado);
+        Map<String, Object> response = new HashMap<>();
+        response.put("asistencias", filtradas.stream().map(a -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", a.getId());
+            map.put("fecha", a.getFecha().format(DATE_FORMAT));
+            map.put("alumno", mapaAlumnos.getOrDefault(a.getIdAlumno(), "ID " + a.getIdAlumno()));
+            map.put("estado", a.getEstado());
+            map.put("bitacora", a.getBitacora() != null ? a.getBitacora() : "");
+            return map;
+        }).collect(Collectors.toList()));
         
-        model.addAttribute("listaAlumnos", listaAlumnos);
-        model.addAttribute("asistencias", filtradas);
-        model.addAttribute("mapaAlumnos", mapaAlumnos);
-        
-        model.addAttribute("totalRegistros", total);
-        model.addAttribute("presentes", presentes);
-        model.addAttribute("ausentes", ausentes);
-        model.addAttribute("porcentaje", Math.round(porcentaje * 100) / 100.0);
+        response.put("total", total);
+        response.put("presentes", presentes);
+        response.put("ausentes", ausentes);
+        response.put("porcentaje", Math.round(porcentaje * 100) / 100.0);
 
-        return "reportes";
+        return response;
     }
 
-    // ==================== EXPORTAR PDF ====================
+    // 3. EXPORTAR PDF PROFESIONAL
     @GetMapping("/reportes/pdf")
     public void exportarPdf(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
@@ -117,35 +133,52 @@ public class ReporteController {
                 .collect(Collectors.toList());
 
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=reporte_asistencias.pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=Reporte_Asistencias_Oficial.pdf");
 
         try (OutputStream os = response.getOutputStream()) {
             PdfWriter writer = new PdfWriter(os);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
-            document.add(new Paragraph("REPORTE DE ASISTENCIAS").setFontSize(18).setBold()
-                    .setTextAlignment(TextAlignment.CENTER).setFontColor(new DeviceRgb(102, 126, 234)));
+            // Encabezado Formal
+            document.add(new Paragraph("SISTEMA ESCOLAR DE CONTROL DE ASISTENCIA")
+                    .setFontSize(10).setFontColor(new DeviceRgb(138, 138, 170))
+                    .setTextAlignment(TextAlignment.RIGHT));
+                    
+            document.add(new Paragraph("REPORTE OFICIAL DE ASISTENCIAS")
+                    .setFontSize(20).setBold().setFontColor(new DeviceRgb(26, 32, 44))
+                    .setTextAlignment(TextAlignment.CENTER).setMarginTop(10));
             
-            document.add(new Paragraph("Periodo: " + inicio.format(DATE_FORMAT) + " al " + fin.format(DATE_FORMAT))
-                    .setTextAlignment(TextAlignment.CENTER).setMarginBottom(20));
+            document.add(new Paragraph("PERIODO EVALUADO: " + inicio.format(DATE_FORMAT) + " AL " + fin.format(DATE_FORMAT))
+                    .setFontSize(12).setTextAlignment(TextAlignment.CENTER).setMarginBottom(20));
 
-            Table table = new Table(UnitValue.createPercentArray(new float[]{2, 3, 2, 4})).useAllAvailableWidth();
+            // Tabla
+            Table table = new Table(UnitValue.createPercentArray(new float[]{2, 4, 2, 5})).useAllAvailableWidth();
+            String[] headers = {"FECHA", "ESTUDIANTE", "ESTADO", "OBSERVACIONES"};
             
-            String[] headers = {"Fecha", "Alumno", "Estado", "Bitácora"};
             for (String h : headers) {
                 table.addHeaderCell(new com.itextpdf.layout.element.Cell()
-                        .add(new Paragraph(h).setBold().setFontColor(ColorConstants.WHITE))
-                        .setBackgroundColor(new DeviceRgb(102, 126, 234))
-                        .setTextAlignment(TextAlignment.CENTER));
+                        .add(new Paragraph(h).setBold().setFontSize(10).setFontColor(ColorConstants.WHITE))
+                        .setBackgroundColor(new DeviceRgb(44, 82, 130))
+                        .setTextAlignment(TextAlignment.CENTER).setPadding(8));
             }
 
             for (Asistencia a : filtradas) {
-                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(a.getFecha().format(DATE_FORMAT))));
-                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(mapaAlumnos.getOrDefault(a.getIdAlumno(), "ID " + a.getIdAlumno()))));
-                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(a.getEstado()))
-                        .setFontColor("Presente".equals(a.getEstado()) ? new DeviceRgb(16, 185, 129) : new DeviceRgb(239, 68, 68)));
-                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(a.getBitacora() != null ? a.getBitacora() : "")));
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(a.getFecha().format(DATE_FORMAT)).setFontSize(9)).setPadding(5));
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(mapaAlumnos.getOrDefault(a.getIdAlumno(), "ID " + a.getIdAlumno())).setFontSize(9)).setPadding(5));
+                
+                com.itextpdf.layout.element.Cell c3 = new com.itextpdf.layout.element.Cell()
+                        .add(new Paragraph(a.getEstado()).setFontSize(9).setBold())
+                        .setPadding(5).setTextAlignment(TextAlignment.CENTER);
+                
+                if ("Presente".equals(a.getEstado())) {
+                    c3.setFontColor(new DeviceRgb(39, 103, 73));
+                } else {
+                    c3.setFontColor(new DeviceRgb(155, 44, 44));
+                }
+                table.addCell(c3);
+                
+                table.addCell(new com.itextpdf.layout.element.Cell().add(new Paragraph(a.getBitacora() != null ? a.getBitacora() : "-").setFontSize(9)).setPadding(5));
             }
 
             document.add(table);
@@ -153,7 +186,7 @@ public class ReporteController {
         }
     }
 
-    // ==================== EXPORTAR EXCEL ====================
+    // 4. EXPORTAR EXCEL PROFESIONAL
     @GetMapping("/reportes/excel")
     public void exportarExcel(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
@@ -174,27 +207,29 @@ public class ReporteController {
                 .collect(Collectors.toList());
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=reporte_asistencias.xlsx");
+        response.setHeader("Content-Disposition", "attachment; filename=Reporte_Asistencias_Oficial.xlsx");
 
         try (Workbook workbook = new XSSFWorkbook(); OutputStream os = response.getOutputStream()) {
-            Sheet sheet = workbook.createSheet("Asistencias");
+            Sheet sheet = workbook.createSheet("Reporte Oficial");
 
+            // Estilos
             CellStyle headerStyle = workbook.createCellStyle();
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);
             headerFont.setColor(IndexedColors.WHITE.getIndex());
             headerStyle.setFont(headerFont);
-            headerStyle.setFillForegroundColor(IndexedColors.INDIGO.getIndex());
+            headerStyle.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
 
             Row titleRow = sheet.createRow(0);
             Cell titleCell = titleRow.createCell(0);
-            titleCell.setCellValue("REPORTE DE ASISTENCIAS: " + inicio.format(DATE_FORMAT) + " al " + fin.format(DATE_FORMAT));
+            titleCell.setCellValue("REPORTE DE ASISTENCIAS: " + inicio.format(DATE_FORMAT) + " AL " + fin.format(DATE_FORMAT));
             titleCell.setCellStyle(headerStyle);
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
 
             Row headerRow = sheet.createRow(2);
-            String[] headers = {"Fecha", "Alumno", "Estado", "Bitácora"};
+            String[] headers = {"FECHA", "ALUMNO", "ESTADO", "OBSERVACIONES"};
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(headers[i]);
@@ -207,13 +242,14 @@ public class ReporteController {
                 row.createCell(0).setCellValue(a.getFecha().format(DATE_FORMAT));
                 row.createCell(1).setCellValue(mapaAlumnos.getOrDefault(a.getIdAlumno(), "ID " + a.getIdAlumno()));
                 row.createCell(2).setCellValue(a.getEstado());
-                row.createCell(3).setCellValue(a.getBitacora() != null ? a.getBitacora() : "");
+                row.createCell(3).setCellValue(a.getBitacora() != null ? a.getBitacora() : "-");
             }
 
             sheet.setColumnWidth(0, 4000);
-            sheet.setColumnWidth(1, 8000);
+            sheet.setColumnWidth(1, 9000);
             sheet.setColumnWidth(2, 4000);
             sheet.setColumnWidth(3, 12000);
+            sheet.createFreezePane(0, 3); // Congela los encabezados en Excel
 
             workbook.write(os);
         }
