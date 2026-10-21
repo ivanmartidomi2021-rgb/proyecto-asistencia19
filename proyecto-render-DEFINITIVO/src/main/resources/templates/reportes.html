@@ -24,21 +24,18 @@
 
         .main-card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2rem; }
         
-        /* HEADER */
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
         .page-title { display: flex; align-items: center; gap: 1rem; }
         .page-title i { font-size: 2rem; color: var(--primary); }
         .page-title h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.5px; }
         .page-title p { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem; }
 
-        /* FILTROS */
         .filtros-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; padding: 1.5rem; background: #f7fafc; border-radius: 12px; border: 1px solid var(--border); }
         .form-group { display: flex; flex-direction: column; }
         .form-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .form-group input, .form-group select { padding: 0.75rem; border: 1px solid #cbd5e0; border-radius: 8px; font-family: inherit; font-size: 0.95rem; color: var(--text-main); transition: all 0.2s; background: white; }
         .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1); }
 
-        /* ESTADÍSTICAS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
         .stat-card { padding: 1.5rem; border-radius: 12px; background: white; border: 1px solid var(--border); position: relative; overflow: hidden; }
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); }
@@ -50,7 +47,6 @@
         .stat-card.success .value { color: #2f855a; }
         .stat-card.danger .value { color: #c53030; }
 
-        /* TABLA */
         .table-responsive { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); background: white; margin-bottom: 2rem; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
         thead { background: #edf2f7; }
@@ -63,7 +59,6 @@
         .badge-presente { background: #c6f6d5; color: #22543d; }
         .badge-ausente { background: #fed7d7; color: #742a2a; }
 
-        /* BOTONES */
         .actions-bar { display: flex; gap: 1rem; justify-content: flex-end; padding-top: 1.5rem; border-top: 1px solid var(--border); }
         .btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; font-family: inherit; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; transition: all 0.2s; border: none; }
         .btn-pdf { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
@@ -71,7 +66,6 @@
         .btn-excel { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
         .btn-excel:hover { background: #c6f6d5; }
         
-        /* LOADER */
         .loader { display: none; text-align: center; padding: 2rem; color: var(--primary); }
         .loader i { font-size: 2rem; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -81,7 +75,6 @@
 <div class="container">
     <div class="main-card">
         
-        <!-- HEADER -->
         <div class="page-header">
             <div class="page-title">
                 <i class="bi bi-file-earmark-bar-graph-fill"></i>
@@ -95,7 +88,6 @@
             </a>
         </div>
 
-        <!-- FILTROS -->
         <div class="filtros-container">
             <div class="form-group">
                 <label>Fecha de Inicio</label>
@@ -122,7 +114,6 @@
             </div>
         </div>
 
-        <!-- ESTADÍSTICAS -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="label">Registros Totales</div>
@@ -142,10 +133,8 @@
             </div>
         </div>
 
-        <!-- LOADER -->
         <div class="loader" id="loader"><i class="bi bi-arrow-repeat"></i> Actualizando datos...</div>
 
-        <!-- TABLA -->
         <div class="table-responsive" id="tablaContainer">
             <table>
                 <thead>
@@ -162,7 +151,6 @@
             </table>
         </div>
 
-        <!-- ACCIONES -->
         <div class="actions-bar">
             <a id="btnPdf" href="#" class="btn btn-pdf">
                 <i class="bi bi-file-earmark-pdf-fill"></i> Exportar a PDF
@@ -176,7 +164,6 @@
 </div>
 
 <script>
-    // Elementos del DOM
     const inputInicio = document.getElementById('filtroInicio');
     const inputFin = document.getElementById('filtroFin');
     const selectAlumno = document.getElementById('filtroAlumno');
@@ -187,7 +174,6 @@
     const btnPdf = document.getElementById('btnPdf');
     const btnExcel = document.getElementById('btnExcel');
 
-    // Función principal para actualizar la vista
     function actualizarReporte() {
         const inicio = inputInicio.value;
         const fin = inputFin.value;
@@ -196,26 +182,21 @@
 
         if (!inicio || !fin) return;
 
-        // Mostrar loader
         loader.style.display = 'block';
         tablaContainer.style.opacity = '0.5';
 
-        // Actualizar enlaces de descarga dinámicamente
         const queryString = `inicio=${inicio}&fin=${fin}${idAlumno ? '&idAlumno=' + idAlumno : ''}${estado ? '&estado=' + estado : ''}`;
         btnPdf.href = `/reportes/pdf?${queryString}`;
         btnExcel.href = `/reportes/excel?${queryString}`;
 
-        // Llamada AJAX al backend
         fetch(`/reportes/datos?${queryString}`)
             .then(response => response.json())
             .then(data => {
-                // Actualizar tarjetas
                 document.getElementById('statTotal').textContent = data.total;
                 document.getElementById('statPresentes').textContent = data.presentes;
                 document.getElementById('statAusentes').textContent = data.ausentes;
                 document.getElementById('statPorcentaje').textContent = data.porcentaje + '%';
 
-                // Llenar tabla
                 tablaBody.innerHTML = '';
                 if (data.asistencias.length === 0) {
                     tablaBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:3rem; color:#a0aec0;">No se encontraron registros para los filtros seleccionados.</td></tr>`;
@@ -233,7 +214,6 @@
                     });
                 }
 
-                // Ocultar loader
                 loader.style.display = 'none';
                 tablaContainer.style.opacity = '1';
             })
@@ -244,13 +224,11 @@
             });
     }
 
-    // Escuchar cambios en los filtros
     inputInicio.addEventListener('change', actualizarReporte);
     inputFin.addEventListener('change', actualizarReporte);
     selectAlumno.addEventListener('change', actualizarReporte);
     selectEstado.addEventListener('change', actualizarReporte);
 
-    // Cargar datos al abrir la página
     document.addEventListener('DOMContentLoaded', actualizarReporte);
 </script>
 </body>
