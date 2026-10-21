@@ -164,11 +164,11 @@
 
         <!-- Botones de Exportación (Pasan los filtros automáticamente) -->
         <div class="acciones">
-            <a th:href="@{/reportes/exportar/pdf(inicio=${inicio}, fin=${fin}, idAlumno=${idAlumnoSeleccionado}, estado=${estadoSeleccionado})}"
+            <a th:href="@{/reportes/pdf(inicio=${inicio}, fin=${fin}, idAlumno=${idAlumnoSeleccionado}, estado=${estadoSeleccionado})}"
                class="btn btn-danger">
                 <i class="bi bi-file-earmark-pdf-fill"></i> Descargar PDF
             </a>
-            <a th:href="@{/reportes/exportar/excel(inicio=${inicio}, fin=${fin}, idAlumno=${idAlumnoSeleccionado}, estado=${estadoSeleccionado})}"
+            <a th:href="@{/reportes/excel(inicio=${inicio}, fin=${fin}, idAlumno=${idAlumnoSeleccionado}, estado=${estadoSeleccionado})}"
                class="btn btn-success">
                 <i class="bi bi-file-earmark-excel-fill"></i> Descargar Excel
             </a>
