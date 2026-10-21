@@ -45,7 +45,7 @@ public class ReporteController {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // 1. VISTA PRINCIPAL DE REPORTES
+    // 1. VISTA PRINCIPAL DE REPORTES (Por defecto HOY)
     @GetMapping("/reportes")
     public String verReportes(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
@@ -54,7 +54,8 @@ public class ReporteController {
             @RequestParam(required = false) String estado,
             Model model) {
 
-        if (inicio == null) inicio = LocalDate.now().withDayOfMonth(1);
+        // Forzamos a que por defecto sea HOY
+        if (inicio == null) inicio = LocalDate.now();
         if (fin == null) fin = LocalDate.now();
 
         model.addAttribute("inicio", inicio);
@@ -66,7 +67,7 @@ public class ReporteController {
         return "reportes";
     }
 
-    // 2. API JSON PARA ACTUALIZACIÓN DINÁMICA (AJAX)
+    // 2. API JSON PARA ACTUALIZACIÓN DINÁMICA
     @GetMapping("/reportes/datos")
     @ResponseBody
     public Map<String, Object> obtenerDatosReporte(
@@ -112,7 +113,7 @@ public class ReporteController {
         return response;
     }
 
-    // 3. EXPORTAR PDF PROFESIONAL
+    // 3. EXPORTAR PDF
     @GetMapping("/reportes/pdf")
     public void exportarPdf(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
@@ -140,7 +141,6 @@ public class ReporteController {
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
-            // Encabezado Formal
             document.add(new Paragraph("SISTEMA ESCOLAR DE CONTROL DE ASISTENCIA")
                     .setFontSize(10).setFontColor(new DeviceRgb(138, 138, 170))
                     .setTextAlignment(TextAlignment.RIGHT));
@@ -152,7 +152,6 @@ public class ReporteController {
             document.add(new Paragraph("PERIODO EVALUADO: " + inicio.format(DATE_FORMAT) + " AL " + fin.format(DATE_FORMAT))
                     .setFontSize(12).setTextAlignment(TextAlignment.CENTER).setMarginBottom(20));
 
-            // Tabla
             Table table = new Table(UnitValue.createPercentArray(new float[]{2, 4, 2, 5})).useAllAvailableWidth();
             String[] headers = {"FECHA", "ESTUDIANTE", "ESTADO", "OBSERVACIONES"};
             
@@ -186,7 +185,7 @@ public class ReporteController {
         }
     }
 
-    // 4. EXPORTAR EXCEL PROFESIONAL
+    // 4. EXPORTAR EXCEL
     @GetMapping("/reportes/excel")
     public void exportarExcel(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
@@ -212,7 +211,6 @@ public class ReporteController {
         try (Workbook workbook = new XSSFWorkbook(); OutputStream os = response.getOutputStream()) {
             Sheet sheet = workbook.createSheet("Reporte Oficial");
 
-            // Estilos
             CellStyle headerStyle = workbook.createCellStyle();
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);
@@ -249,7 +247,7 @@ public class ReporteController {
             sheet.setColumnWidth(1, 9000);
             sheet.setColumnWidth(2, 4000);
             sheet.setColumnWidth(3, 12000);
-            sheet.createFreezePane(0, 3); // Congela los encabezados en Excel
+            sheet.createFreezePane(0, 3);
 
             workbook.write(os);
         }
